@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alpha1 AI Platform - Join the Waitlist</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 60px 0;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .hero .subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .status-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 25px;
+            margin-bottom: 40px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        .waitlist-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px 0;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .waitlist-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .stats-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 40px 0;
+            text-align: center;
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .stat-item h3 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <div class="status-badge">🚀 Pre-Launch • Building Waitlist</div>
+            <h1>Alpha1 AI Platform</h1>
+            <p class="subtitle">The Future of AI-Powered Development is Coming</p>
+            <p>8 Specialized AI Agents • Intelligent Code Generation • Automated Testing • DevOps Automation</p>
+        </div>
+
+        <div class="stats-section">
+            <h2>Join Thousands of Developers Already Waiting</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3 id="total-signups">0</h3>
+                    <p>Developers Waiting</p>
+                </div>
+                <div class="stat-item">
+                    <h3 id="weekly-signups">0</h3>
+                    <p>This Week</p>
+                </div>
+                <div class="stat-item">
+                    <h3>Q2 2024</h3>
+                    <p>Estimated Launch</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="waitlist-section">
+            <h2 style="text-align: center; margin-bottom: 30px;">🎯 Secure Your Early Access</h2>
+            
+            <div class="success-message" id="success-message"></div>
+            <div class="error-message" id="error-message"></div>
+            
+            <form class="waitlist-form" id="waitlist-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Full Name *</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="company">Company/Organization</label>
+                        <input type="text" id="company" name="company">
+                    </div>
+                    <div class="form-group">
+                        <label for="role">Your Role</label>
+                        <select id="role" name="role">
+                            <option value="">Select your role</option>
+                            <option value="developer">Software Developer</option>
+                            <option value="architect">Software Architect</option>
+                            <option value="manager">Engineering Manager</option>
+                            <option value="cto">CTO/Tech Lead</option>
+                            <option value="founder">Founder/CEO</option>
+                            <option value="student">Student</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="use_case">What would you use Alpha1 AI for? (Optional)</label>
+                    <textarea id="use_case" name="use_case" rows="3" placeholder="e.g., Building web applications, automating testing, DevOps workflows..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="referral_source">How did you hear about us?</label>
+                    <select id="referral_source" name="referral_source">
+                        <option value="website">Direct/Website</option>
+                        <option value="social_media">Social Media</option>
+                        <option value="github">GitHub</option>
+                        <option value="friend">Friend/Colleague</option>
+                        <option value="blog">Blog/Article</option>
+                        <option value="conference">Conference/Event</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="submit-btn" id="submit-btn">
+                    🚀 Join the Waitlist
+                </button>
+            </form>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>8 Specialized AI Agents</h3>
+                <p>Project Manager, Developer, QA Engineer, DevOps, AI/ML Engineer, Technical Writer, Marketing Specialist, and AI Trainer working together.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Lightning Fast Development</h3>
+                <p>Generate production-ready code, automated tests, and deployment pipelines in minutes, not hours.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Enterprise Security</h3>
+                <p>Built with security-first approach, GDPR compliant, and ready for enterprise deployment.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Early Access Benefits</h3>
+                <p>Lifetime discounts, priority support, influence product roadmap, and exclusive beta features.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load waitlist stats
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/waitlist/stats');
+                if (response.ok) {
+                    const stats = await response.json();
+                    document.getElementById('total-signups').textContent = stats.total_signups.toLocaleString();
+                    document.getElementById('weekly-signups').textContent = stats.weekly_signups;
+                }
+            } catch (error) {
+                console.log('Stats not available');
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('waitlist-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submit-btn');
+            const successMsg = document.getElementById('success-message');
+            const errorMsg = document.getElementById('error-message');
+            
+            // Hide previous messages
+            successMsg.style.display = 'none';
+            errorMsg.style.display = 'none';
+            
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Joining...';
+            
+            try {
+                const formData = new FormData(e.target);
+                const data = Object.fromEntries(formData.entries());
+                
+                const response = await fetch('/api/waitlist/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    successMsg.innerHTML = `
+                        <strong>🎉 Welcome to Alpha1 AI!</strong><br>
+                        You're #${result.position} on the waitlist.<br>
+                        Estimated wait time: ${result.estimated_wait}<br>
+                        We'll notify you when it's your turn!
+                    `;
+                    successMsg.style.display = 'block';
+                    e.target.reset();
+                    loadStats(); // Refresh stats
+                } else {
+                    errorMsg.innerHTML = `<strong>Error:</strong> ${result.error}`;
+                    errorMsg.style.display = 'block';
+                }
+            } catch (error) {
+                errorMsg.innerHTML = '<strong>Error:</strong> Unable to join waitlist. Please try again.';
+                errorMsg.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🚀 Join the Waitlist';
+            }
+        });
+
+        // Load stats on page load
+        loadStats();
+    </script>
+</body>
+</html>

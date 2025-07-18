@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alpha 1 AI Platform - Enterprise AI Development Suite</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-dark: #0a0a0a;
+            --secondary-dark: #1a1a1a;
+            --tertiary-dark: #2a2a2a;
+            --accent-blue: #00d4ff;
+            --accent-blue-hover: #00b8e6;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-muted: #808080;
+            --border-color: #333333;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --shadow-primary: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --shadow-secondary: 0 4px 16px rgba(0, 0, 0, 0.2);
+            --gradient-primary: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            --gradient-dark: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--primary-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-blue);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: var(--shadow-secondary);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-primary);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--glass-bg);
+            color: var(--text-primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            background: radial-gradient(ellipse at center, rgba(0, 212, 255, 0.1) 0%, transparent 70%);
+        }
+
+        .hero-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-content .highlight {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-content p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Hero Visual */
+        .hero-visual {
+            position: relative;
+            height: 600px;
+        }
+
+        .dashboard-preview {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            box-shadow: var(--shadow-primary);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .preview-title {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .preview-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent-blue);
+            font-size: 0.9rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .preview-content {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .preview-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .card-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .card-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 8rem 0;
+            background: var(--secondary-dark);
+        }
+
+        .features-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-primary);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .feature-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Chat Widget */
+        .chat-widget {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+        }
+
+        .chat-toggle {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-primary);
+            transition: transform 0.3s ease;
+        }
+
+        .chat-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .chat-window {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 350px;
+            height: 500px;
+            background: var(--secondary-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: var(--shadow-primary);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-window.active {
+            display: flex;
+        }
+
+        .chat-header {
+            padding: 1rem;
+            background: var(--tertiary-dark);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chat-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .chat-message {
+            max-width: 80%;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            animation: messageSlide 0.3s ease-out;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chat-message.bot {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            align-self: flex-start;
+        }
+
+        .chat-message.bot.typing {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+        }
+
+        .chat-message.bot.error {
+            background: rgba(220, 53, 69, 0.1);
+            border-color: rgba(220, 53, 69, 0.3);
+            color: #ff6b6b;
+        }
+
+        .chat-message.user {
+            background: var(--gradient-primary);
+            color: white;
+            align-self: flex-end;
+        }
+
+        .typing-dots {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .typing-dots span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            animation: typingDot 1.4s infinite ease-in-out;
+        }
+
+        .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0s; }
+
+        @keyframes typingDot {
+            0%, 80%, 100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .chat-message strong {
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+
+        .chat-message br {
+            margin: 4px 0;
+        }
+
+        .chat-input-container {
+            padding: 1rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: var(--tertiary-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .chat-send {
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            color: white;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chat-window {
+                width: 300px;
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">Alpha 1 AI</div>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#docs">Documentation</a></li>
+                <li><a href="#support">Support</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="#login" class="btn btn-secondary">Sign In</a>
+                <a href="#signup" class="btn btn-primary">Start Free Trial</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1>
+                    Build <span class="highlight">Intelligent</span><br>
+                    Applications with<br>
+                    <span class="highlight">AI Agents</span>
+                </h1>
+                <p>
+                    Transform your development workflow with our enterprise-grade AI platform. 
+                    From simple apps to complex agency automation, scale your business with 
+                    intelligent multi-agent systems.
+                </p>
+                <div class="hero-actions">
+                    <a href="#signup" class="btn btn-primary">
+                        <i class="fas fa-rocket"></i>
+                        Start Building Now
+                    </a>
+                    <a href="#demo" class="btn btn-secondary">
+                        <i class="fas fa-play"></i>
+                        Watch Demo
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">8</span>
+                        <span class="stat-label">AI Agents</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">99.9%</span>
+                        <span class="stat-label">Uptime</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">24/7</span>
+                        <span class="stat-label">Support</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="dashboard-preview">
+                    <div class="preview-header">
+                        <div class="preview-title">AI Agent Dashboard</div>
+                        <div class="preview-status">
+                            <div class="status-dot"></div>
+                            All Systems Operational
+                        </div>
+                    </div>
+                    <div class="preview-content">
+                        <div class="preview-card">
+                            <div class="card-icon"><i class="fas fa-robot"></i></div>
+                            <div class="card-title">Active Agents</div>
+                            <div class="card-value">8</div>
+                        </div>
+                        <div class="preview-card">
+                            <div class="card-icon"><i class="fas fa-project-diagram"></i></div>
+                            <div class="card-title">Projects</div>
+                            <div class="card-value">24</div>
+                        </div>
+                        <div class="preview-card">
+                            <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+                            <div class="card-title">Success Rate</div>
+                            <div class="card-value">99.2%</div>
+                        </div>
+                        <div class="preview-card">
+                            <div class="card-icon"><i class="fas fa-clock"></i></div>
+                            <div class="card-title">Avg Response</div>
+                            <div class="card-value">2.1s</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="features-container">
+            <div class="section-header">
+                <h2 class="section-title">Powerful AI-Driven Development</h2>
+                <p class="section-subtitle">
+                    Everything you need to build, deploy, and scale intelligent applications 
+                    with our comprehensive AI agent ecosystem.
+                </p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-users-cog"></i></div>
+                    <h3 class="feature-title">Multi-Agent Workflows</h3>
+                    <p class="feature-description">
+                        Orchestrate specialized AI agents for project management, development, 
+                        testing, and deployment. Each agent brings expert-level knowledge to your workflow.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-code"></i></div>
+                    <h3 class="feature-title">Intelligent Code Generation</h3>
+                    <p class="feature-description">
+                        Generate production-ready code with our AI developers. From simple scripts 
+                        to complex applications, get high-quality code that follows best practices.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h3 class="feature-title">Automated Testing & QA</h3>
+                    <p class="feature-description">
+                        Comprehensive testing strategies with automated test generation, performance 
+                        monitoring, and security assessments powered by AI.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-cloud"></i></div>
+                    <h3 class="feature-title">DevOps Automation</h3>
+                    <p class="feature-description">
+                        Streamline deployment with intelligent infrastructure management, 
+                        CI/CD pipelines, and cloud optimization strategies.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
+                    <h3 class="feature-title">Real-time Analytics</h3>
+                    <p class="feature-description">
+                        Monitor performance, track metrics, and gain insights with comprehensive 
+                        analytics and reporting dashboards.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-infinity"></i></div>
+                    <h3 class="feature-title">Scalable Architecture</h3>
+                    <p class="feature-description">
+                        Built for enterprise scale with microservices architecture, 
+                        load balancing, and auto-scaling capabilities.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chat Widget -->
+    <div class="chat-widget">
+        <button class="chat-toggle" onclick="toggleChat()">
+            <i class="fas fa-comments"></i>
+        </button>
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <div class="chat-title">
+                    <i class="fas fa-robot"></i>
+                    AI Assistant
+                </div>
+                <button class="chat-close" onclick="toggleChat()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-message bot">
+                    🤖 <strong>Hello! I'm your Alpha 1 AI Platform assistant.</strong><br><br>
+                    I'm trained on our complete platform documentation and can help you with:
+                    <br>• <strong>AI Agents</strong> - Learn about our 8 specialized agents
+                    <br>• <strong>Pricing</strong> - Compare plans and features  
+                    <br>• <strong>Features</strong> - Explore platform capabilities
+                    <br>• <strong>Getting Started</strong> - Setup and onboarding
+                    <br>• <strong>Technical Info</strong> - APIs, integrations, architecture
+                    <br>• <strong>Support</strong> - Get help and resources
+                    <br>• <strong>Demos</strong> - See the platform in action
+                </div>
+                <div class="chat-message bot">
+                    What would you like to know about Alpha 1 AI Platform? I can provide detailed, accurate information about any aspect of our system! 🚀
+                </div>
+            </div>
+            <div class="chat-input-container">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Ask me anything..." onkeypress="handleChatKeypress(event)">
+                <button class="chat-send" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced AI Platform Chatbot with Agent Integration
+        class PlatformChatbot {
+            constructor() {
+                this.apiBase = 'http://localhost:5001';
+                this.sessionId = this.generateSessionId();
+                this.isAuthenticated = false;
+                this.knowledgeBase = this.initializeKnowledgeBase();
+                this.conversationHistory = [];
+                this.init();
+            }
+
+            generateSessionId() {
+                return 'chat_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+            }
+
+            init() {
+                // Try to authenticate for enhanced features
+                this.authenticateGuest();
+            }
+
+            async authenticateGuest() {
+                try {
+                    const response = await fetch(`${this.apiBase}/api/auth/guest-token`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ session_id: this.sessionId })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.authToken = data.token;
+                        this.isAuthenticated = true;
+                        console.log('✅ Chatbot authenticated with platform');
+                    }
+                } catch (error) {
+                    console.log('ℹ️ Using offline knowledge base');
+                    this.isAuthenticated = false;
+                }
+            }
+
+            initializeKnowledgeBase() {
+                return {
+                    platform: {
+                        name: "Alpha 1 AI Platform",
+                        description: "Next-generation AI-powered development platform with 8 specialized agents",
+                        version: "2.0",
+                        architecture: "Microservices with CrewAI framework"
+                    },
+                    agents: {
+                        "project-manager": {
+                            name: "Project Manager",
+                            role: "Strategic planning and project coordination",
+                            capabilities: ["Project Planning", "Resource Management", "Timeline Optimization", "Risk Assessment"],
+                            use_cases: ["Project roadmaps", "Sprint planning", "Resource allocation", "Progress tracking"]
+                        },
+                        "developer": {
+                            name: "Senior Developer",
+                            role: "Full-stack development and architecture",
+                            capabilities: ["Code Generation", "Architecture Design", "Code Review", "Performance Optimization"],
+                            use_cases: ["Application development", "API design", "Database optimization", "Code refactoring"]
+                        },
+                        "tester": {
+                            name: "QA Engineer",
+                            role: "Quality assurance and testing",
+                            capabilities: ["Test Strategy", "Automated Testing", "Performance Testing", "Security Testing"],
+                            use_cases: ["Test automation", "Bug detection", "Performance analysis", "Security audits"]
+                        },
+                        "devops": {
+                            name: "DevOps Engineer",
+                            role: "Infrastructure and deployment automation",
+                            capabilities: ["CI/CD Pipelines", "Infrastructure as Code", "Monitoring", "Scaling"],
+                            use_cases: ["Deployment automation", "Infrastructure setup", "Performance monitoring", "Scaling strategies"]
+                        },
+                        "ai-engineer": {
+                            name: "AI/ML Engineer",
+                            role: "AI model development and optimization",
+                            capabilities: ["Model Development", "Data Processing", "ML Pipelines", "Model Deployment"],
+                            use_cases: ["Custom AI models", "Data analysis", "Predictive analytics", "AI integration"]
+                        },
+                        "fine-tuning": {
+                            name: "Technical Writer",
+                            role: "Documentation and knowledge management",
+                            capabilities: ["API Documentation", "User Guides", "Technical Specifications", "Knowledge Base"],
+                            use_cases: ["Documentation creation", "API guides", "User manuals", "Knowledge management"]
+                        },
+                        "marketing": {
+                            name: "Marketing Specialist",
+                            role: "Digital marketing and content strategy",
+                            capabilities: ["Content Strategy", "SEO Optimization", "Campaign Management", "Analytics"],
+                            use_cases: ["Content creation", "Marketing campaigns", "SEO optimization", "Brand strategy"]
+                        },
+                        "trainer": {
+                            name: "AI Trainer",
+                            role: "Agent training and optimization",
+                            capabilities: ["Model Training", "Fine-tuning", "Performance Optimization", "Knowledge Enhancement"],
+                            use_cases: ["Agent improvement", "Custom training", "Performance tuning", "Knowledge updates"]
+                        }
+                    },
+                    pricing: {
+                        starter: {
+                            name: "Starter",
+                            price: "$29/month",
+                            agents: 3,
+                            features: ["Basic AI agents", "Standard support", "5GB storage", "Basic analytics"]
+                        },
+                        professional: {
+                            name: "Professional",
+                            price: "$99/month",
+                            agents: 8,
+                            features: ["All AI agents", "Priority support", "50GB storage", "Advanced analytics", "Custom workflows"]
+                        },
+                        enterprise: {
+                            name: "Enterprise",
+                            price: "Custom",
+                            agents: "Unlimited",
+                            features: ["Unlimited agents", "24/7 dedicated support", "Unlimited storage", "Custom integrations", "On-premise deployment"]
+                        }
+                    },
+                    features: {
+                        core: ["Multi-agent workflows", "Intelligent code generation", "Automated testing", "DevOps automation"],
+                        advanced: ["Real-time analytics", "Custom AI training", "Enterprise security", "API integrations"],
+                        enterprise: ["On-premise deployment", "Custom agents", "Dedicated support", "SLA guarantees"]
+                    },
+                    getting_started: {
+                        steps: [
+                            "Sign up for your preferred plan",
+                            "Complete the onboarding process",
+                            "Choose your first AI agents",
+                            "Start your first project",
+                            "Explore advanced features"
+                        ],
+                        quick_wins: [
+                            "Generate code with the Developer agent",
+                            "Plan projects with the Project Manager",
+                            "Automate testing with QA Engineer",
+                            "Deploy with DevOps automation"
+                        ]
+                    }
+                };
+            }
+
+            async getAIResponse(message) {
+                console.log('🤖 Getting AI response for:', message);
+                this.conversationHistory.push({ role: 'user', content: message, timestamp: new Date().toISOString() });
+
+                // Always try to use the real AI agent system first
+                try {
+                    console.log('🔄 Trying AI agent...');
+                    const aiResponse = await this.queryIntelligentAgent(message);
+                    if (aiResponse) {
+                        console.log('✅ AI agent response received:', aiResponse.substring(0, 100) + '...');
+                        this.conversationHistory.push({ role: 'assistant', content: aiResponse, timestamp: new Date().toISOString() });
+                        return aiResponse;
+                    } else {
+                        console.log('❌ AI agent returned null');
+                    }
+                } catch (error) {
+                    console.log('❌ AI agent failed:', error);
+                }
+
+                // Enhanced fallback with intelligent processing
+                console.log('🔄 Using fallback response');
+                const response = this.processIntelligentFallback(message);
+                this.conversationHistory.push({ role: 'assistant', content: response, timestamp: new Date().toISOString() });
+                return response;
+            }
+
+            async queryIntelligentAgent(message) {
+                try {
+                    // First ensure we have authentication
+                    if (!this.isAuthenticated) {
+                        console.log('🔐 Authenticating guest...');
+                        await this.authenticateGuest();
+                    }
+
+                    if (!this.isAuthenticated) {
+                        console.log('❌ Authentication failed');
+                        return null;
+                    }
+
+                    console.log('📡 Making API call to documentation agent...');
+                    // Use the Technical Writer agent for comprehensive platform knowledge
+                    const response = await fetch(`${this.apiBase}/api/agents/documentation/chat`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${this.authToken}`
+                        },
+                        body: JSON.stringify({
+                            message: this.createEnhancedPrompt(message),
+                            session_id: this.sessionId,
+                            context: "homepage_chatbot"
+                        })
+                    });
+
+                    console.log('📡 API response status:', response.status);
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('📦 API response data:', data);
+                        return this.formatAIResponse(data.response);
+                    } else {
+                        console.log('❌ API response not ok:', response.status, response.statusText);
+                    }
+                } catch (error) {
+                    console.log('❌ Intelligent agent query failed:', error);
+                }
+                return null;
+            }
+
+            createEnhancedPrompt(userMessage) {
+                const platformContext = `
+You are an expert AI assistant for the Alpha 1 AI Platform. You have comprehensive knowledge about:
+
+PLATFORM OVERVIEW:
+- Alpha 1 AI is a multi-agent AI platform with 8 specialized agents
+- Offers intelligent code generation, automated testing, DevOps automation
+- Supports custom AI model training and deployment
+- Enterprise-grade security and scalability
+
+AI AGENTS (8 total):
+1. Project Manager - Strategic planning, coordination, project roadmaps
+2. Senior Developer - Full-stack development, architecture, code generation
+3. QA Engineer - Quality assurance, automated testing, bug detection
+4. DevOps Engineer - Infrastructure, deployment, CI/CD automation
+5. AI/ML Engineer - Custom AI models, data processing, ML pipelines
+6. Technical Writer - Documentation, API guides, knowledge management
+7. Marketing Specialist - Content strategy, SEO, campaign management
+8. AI Trainer - Agent optimization, fine-tuning, performance enhancement
+
+PRICING PLANS:
+- Starter ($29/month): 3 agents, basic features, 5GB storage
+- Professional ($99/month): 8 agents, advanced features, 50GB storage
+- Enterprise (Custom): Unlimited agents, dedicated support, on-premise
+
+KEY FEATURES:
+- Multi-agent workflows and collaboration
+- Real-time code generation and review
+- Automated testing and deployment
+- Custom AI model training
+- Enterprise security and compliance
+- API integrations and webhooks
+- Real-time analytics and monitoring
+
+TECHNICAL CAPABILITIES:
+- RESTful API with OpenAPI 3.0 specs
+- JWT authentication and RBAC
+- Docker containerization
+- Kubernetes deployment
+- Real-time WebSocket connections
+- Custom model training and fine-tuning
+- Vector database for knowledge management
+
+USER QUESTION: "${userMessage}"
+
+Provide a helpful, detailed, and accurate response about the Alpha 1 AI Platform. Be conversational, use emojis appropriately, and format your response clearly. If the question is about specific features, pricing, or technical details, provide comprehensive information. Always aim to be helpful and guide users toward the best solution for their needs.`;
+
+                return platformContext;
+            }
+
+            formatAIResponse(response) {
+                // Clean up and format the AI response
+                if (!response) return this.processIntelligentFallback("I'm having trouble processing that request.");
+                
+                // Add emojis and formatting if not already present
+                let formattedResponse = response;
+                
+                // Add appropriate emojis based on content
+                if (formattedResponse.includes('pricing') || formattedResponse.includes('plan')) {
+                    formattedResponse = '💰 ' + formattedResponse;
+                } else if (formattedResponse.includes('agent') || formattedResponse.includes('AI')) {
+                    formattedResponse = '🤖 ' + formattedResponse;
+                } else if (formattedResponse.includes('feature') || formattedResponse.includes('capability')) {
+                    formattedResponse = '🚀 ' + formattedResponse;
+                } else if (formattedResponse.includes('technical') || formattedResponse.includes('API')) {
+                    formattedResponse = '🔧 ' + formattedResponse;
+                } else if (formattedResponse.includes('support') || formattedResponse.includes('help')) {
+                    formattedResponse = '💬 ' + formattedResponse;
+                }
+
+                return formattedResponse;
+            }
+
+            processIntelligentFallback(message) {
+                const lowerMessage = message.toLowerCase();
+                
+                // Use more intelligent pattern matching with context awareness
+                if (this.isPricingQuery(lowerMessage)) {
+                    return this.generateDetailedPricingResponse(lowerMessage);
+                }
+                
+                if (this.isAgentQuery(lowerMessage)) {
+                    return this.generateDetailedAgentResponse(lowerMessage);
+                }
+                
+                if (this.isFeatureQuery(lowerMessage)) {
+                    return this.generateDetailedFeatureResponse(lowerMessage);
+                }
+                
+                if (this.isTechnicalQuery(lowerMessage)) {
+                    return this.generateDetailedTechnicalResponse(lowerMessage);
+                }
+                
+                if (this.isGettingStartedQuery(lowerMessage)) {
+                    return this.generateDetailedGettingStartedResponse(lowerMessage);
+                }
+
+                // Intelligent default response based on context
+                return this.generateContextualDefaultResponse(message);
+            }
+
+            isPricingQuery(message) {
+                const pricingKeywords = ['pricing', 'cost', 'price', 'plan', 'subscription', 'fee', 'payment', 'billing', 'expensive', 'cheap', 'affordable'];
+                return pricingKeywords.some(keyword => message.includes(keyword));
+            }
+
+            isAgentQuery(message) {
+                const agentKeywords = ['agent', 'ai', 'bot', 'assistant', 'developer', 'engineer', 'manager', 'specialist', 'trainer'];
+                return agentKeywords.some(keyword => message.includes(keyword));
+            }
+
+            isFeatureQuery(message) {
+                const featureKeywords = ['feature', 'capability', 'function', 'what can', 'what does', 'ability', 'tool', 'service'];
+                return featureKeywords.some(keyword => message.includes(keyword));
+            }
+
+            isTechnicalQuery(message) {
+                const techKeywords = ['api', 'integration', 'technical', 'code', 'development', 'deployment', 'architecture', 'security'];
+                return techKeywords.some(keyword => message.includes(keyword));
+            }
+
+            isGettingStartedQuery(message) {
+                const startKeywords = ['start', 'begin', 'how to', 'setup', 'getting started', 'onboard', 'first', 'new'];
+                return startKeywords.some(keyword => message.includes(keyword));
+            }
+
+            generateDetailedPricingResponse(message) {
+                const { starter, professional, enterprise } = this.knowledgeBase.pricing;
+                
+                if (message.includes('starter') || message.includes('basic') || message.includes('cheap')) {
+                    return `💰 **Starter Plan - ${starter.price}**\n\nPerfect for individuals and small teams getting started with AI automation:\n\n✅ **${starter.agents} AI Agents included:**\n• Project Manager for planning\n• Senior Developer for coding\n• QA Engineer for testing\n\n✅ **Features:**\n${starter.features.map(f => `• ${f}`).join('\n')}\n\nThis plan is ideal if you're just starting with AI-powered development and want to test our platform's capabilities. Ready to upgrade your workflow? 🚀`;
+                }
+                
+                if (message.includes('professional') || message.includes('popular') || message.includes('recommended')) {
+                    return `⭐ **Professional Plan - ${professional.price}** (Most Popular!)\n\nOur most comprehensive plan for serious developers and growing teams:\n\n🤖 **All ${professional.agents} AI Agents:**\n• Complete development team automation\n• Advanced AI/ML capabilities\n• Marketing and content creation\n• Dedicated training and optimization\n\n✅ **Premium Features:**\n${professional.features.map(f => `• ${f}`).join('\n')}\n\nThis plan gives you the full Alpha 1 AI experience with all agents and advanced features. Perfect for professional development teams! 💪`;
+                }
+                
+                if (message.includes('enterprise') || message.includes('business') || message.includes('unlimited')) {
+                    return `🏢 **Enterprise Plan - ${enterprise.price}**\n\nBuilt for large organizations with demanding requirements:\n\n🚀 **${enterprise.agents} Agents** - Scale without limits\n\n✅ **Enterprise Features:**\n${enterprise.features.map(f => `• ${f}`).join('\n')}\n\n**Perfect for:**\n• Large development teams\n• Mission-critical applications\n• Custom integration requirements\n• Compliance and security needs\n\nContact our sales team for a custom quote tailored to your organization! 📞`;
+                }
+
+                return `💰 **Alpha 1 AI Platform Pricing:**\n\n🚀 **${starter.name}** - ${starter.price}\n• ${starter.agents} AI agents • ${starter.features.slice(0,2).join(' • ')}\n\n⭐ **${professional.name}** - ${professional.price} (Most Popular)\n• ${professional.agents} AI agents • ${professional.features.slice(0,2).join(' • ')}\n\n🏢 **${enterprise.name}** - ${enterprise.price}\n• ${enterprise.agents} agents • ${enterprise.features.slice(0,2).join(' • ')}\n\nWhich plan interests you most? I can provide more details about any specific plan! 🎯`;
+            }
+
+            generateDetailedAgentResponse(message) {
+                if (message.includes('project') || message.includes('manager') || message.includes('planning')) {
+                    const agent = this.knowledgeBase.agents['project-manager'];
+                    return `🎯 **${agent.name}** - Your Strategic Planning Partner\n\n**Role:** ${agent.role}\n\n**What they do:**\n${agent.capabilities.map(c => `• ${c}`).join('\n')}\n\n**Perfect for:**\n${agent.use_cases.map(u => `• ${u}`).join('\n')}\n\nThe Project Manager agent helps you break down complex projects, create realistic timelines, and coordinate with other agents for seamless execution. Think of them as your AI project coordinator! 📋`;
+                }
+                
+                if (message.includes('develop') || message.includes('code') || message.includes('programming')) {
+                    const agent = this.knowledgeBase.agents['developer'];
+                    return `👨‍💻 **${agent.name}** - Your Coding Powerhouse\n\n**Role:** ${agent.role}\n\n**Capabilities:**\n${agent.capabilities.map(c => `• ${c}`).join('\n')}\n\n**Specializes in:**\n${agent.use_cases.map(u => `• ${u}`).join('\n')}\n\nThis agent can generate production-ready code in any language, review your existing code, suggest optimizations, and even help with complex architectural decisions. It's like having a senior developer on your team 24/7! 💪`;
+                }
+
+                if (message.includes('test') || message.includes('qa') || message.includes('quality')) {
+                    const agent = this.knowledgeBase.agents['qa-engineer'];
+                    return `🔍 **${agent.name}** - Your Quality Guardian\n\n**Role:** ${agent.role}\n\n**Expertise:**\n${agent.capabilities.map(c => `• ${c}`).join('\n')}\n\n**Ensures:**\n${agent.use_cases.map(u => `• ${u}`).join('\n')}\n\nThe QA Engineer agent automatically generates comprehensive test suites, identifies potential bugs before they reach production, and ensures your code meets the highest quality standards. Quality assurance made effortless! ✅`;
+                }
+
+                return `🤖 **Meet Our 8 Specialized AI Agents:**\n\n**Development Team:**\n• **Project Manager** 🎯 - Strategic planning & coordination\n• **Senior Developer** 👨‍💻 - Full-stack development & architecture\n• **QA Engineer** 🔍 - Quality assurance & automated testing\n• **DevOps Engineer** ⚙️ - Infrastructure & deployment automation\n\n**AI & Content Team:**\n• **AI/ML Engineer** 🧠 - Custom AI model development\n• **Technical Writer** 📝 - Documentation & knowledge management\n• **Marketing Specialist** 📈 - Digital marketing & content strategy\n• **AI Trainer** 🎓 - Agent optimization & performance tuning\n\nEach agent is specialized for specific tasks but they work together seamlessly. Which agent would you like to learn more about? 🚀`;
+            }
+
+            generateDetailedFeatureResponse(lowerMessage) {
+                if (lowerMessage.includes('code') || lowerMessage.includes('development')) {
+                    return `👨‍💻 **Development Features:**\n\n🚀 **Intelligent Code Generation:**\n• Multi-language support (Python, JavaScript, Java, C++, etc.)\n• Context-aware code suggestions\n• Architecture pattern implementation\n• Code optimization and refactoring\n\n🔍 **Smart Code Review:**\n• Automated code analysis\n• Security vulnerability detection\n• Performance optimization suggestions\n• Best practice recommendations\n\n⚡ **Real-time Collaboration:**\n• Live code generation with multiple agents\n• Instant feedback and improvements\n• Version control integration\n\nOur development features turn ideas into production-ready code faster than ever! Want to see a demo? 🎯`;
+                }
+
+                if (lowerMessage.includes('test') || lowerMessage.includes('quality')) {
+                    return `🔍 **Quality Assurance Features:**\n\n✅ **Automated Testing:**\n• Unit test generation\n• Integration test creation\n• End-to-end test automation\n• Performance testing suites\n\n🛡️ **Quality Gates:**\n• Code coverage analysis\n• Security scanning\n• Performance benchmarking\n• Compliance checking\n\n📊 **Continuous Monitoring:**\n• Real-time quality metrics\n• Automated bug detection\n• Performance regression alerts\n• Quality trend analysis\n\nEnsure your code meets the highest standards with zero manual effort! 🎯`;
+                }
+
+                return `🚀 **Alpha 1 AI Platform Core Features:**\n\n**🤖 Multi-Agent Workflows:**\n• 8 specialized AI agents working together\n• Intelligent task delegation and coordination\n• Real-time collaboration and communication\n\n**💻 Development Automation:**\n• Intelligent code generation in any language\n• Automated testing and quality assurance\n• CI/CD pipeline automation\n• Infrastructure management\n\n**🧠 AI/ML Capabilities:**\n• Custom model training and deployment\n• Real-time data processing\n• Predictive analytics\n• Knowledge base management\n\n**📊 Enterprise Features:**\n• Real-time analytics and monitoring\n• Enterprise security and compliance\n• Custom integrations and APIs\n• Scalable cloud infrastructure\n\nWhich feature area interests you most? I can dive deeper into any of these! 🎯`;
+            }
+
+            generateDetailedTechnicalResponse(lowerMessage) {
+                if (lowerMessage.includes('api')) {
+                    return `🔧 **Alpha 1 AI Platform API:**\n\n**📡 RESTful API:**\n• OpenAPI 3.0 specification\n• JWT authentication with RBAC\n• JSON request/response format\n• Comprehensive error handling\n\n**🔗 Key Endpoints:**\n• \`/api/agents/{id}/chat\` - Chat with specific agents\n• \`/api/projects\` - Project management\n• \`/api/models\` - AI model operations\n• \`/api/analytics\` - Performance metrics\n\n**🛡️ Security:**\n• Bearer token authentication\n• Rate limiting and throttling\n• Request validation and sanitization\n• Audit logging\n\n**📚 Documentation:**\n• Interactive API explorer\n• Code examples in multiple languages\n• SDK libraries available\n\nBase URL: \`http://localhost:5001/api\`\nWant to see specific API examples? 🚀`;
+                }
+
+                if (lowerMessage.includes('integration')) {
+                    return `🔗 **Integration Capabilities:**\n\n**🛠️ Development Tools:**\n• GitHub/GitLab integration\n• VS Code extension\n• Slack/Teams notifications\n• Jira/Asana project sync\n\n**☁️ Cloud Platforms:**\n• AWS, Azure, GCP deployment\n• Docker containerization\n• Kubernetes orchestration\n• Serverless functions\n\n**📊 Data Sources:**\n• Database connections (SQL/NoSQL)\n• API integrations\n• File system access\n• Real-time data streams\n\n**🔧 Custom Integrations:**\n• Webhook support\n• Custom API endpoints\n• Plugin architecture\n• SDK development\n\nNeed help with a specific integration? I can guide you through the setup! 🎯`;
+                }
+
+                return `🔧 **Technical Architecture:**\n\n**🏗️ Platform Stack:**\n• Backend: Python Flask with SQLAlchemy\n• Frontend: Modern HTML5/CSS3/JavaScript\n• Database: PostgreSQL with Redis caching\n• AI: OpenAI GPT integration + custom models\n\n**🚀 Deployment Options:**\n• Cloud-native (AWS, Azure, GCP)\n• On-premise installation\n• Hybrid cloud deployment\n• Docker containerization\n\n**🛡️ Security & Compliance:**\n• JWT authentication with RBAC\n• End-to-end encryption\n• SOC 2 Type II compliance\n• GDPR compliance\n\n**📊 Scalability:**\n• Microservices architecture\n• Auto-scaling capabilities\n• Load balancing\n• Global CDN\n\nNeed specific technical details about any component? 🎯`;
+            }
+
+            generateDetailedGettingStartedResponse(lowerMessage) {
+                return `🚀 **Getting Started with Alpha 1 AI Platform:**\n\n**Step 1: Choose Your Plan** 💰\n• Start with our Starter plan ($29/month) for basic features\n• Upgrade to Professional ($99/month) for full access\n• Contact us for Enterprise custom pricing\n\n**Step 2: Quick Setup** ⚡\n• Sign up and verify your email\n• Complete the 5-minute onboarding\n• Connect your development tools (GitHub, VS Code, etc.)\n\n**Step 3: Meet Your Agents** 🤖\n• Start with the Project Manager for planning\n• Use the Developer agent for code generation\n• Try the QA Engineer for automated testing\n\n**Step 4: First Project** 🎯\n• Create a new project in the dashboard\n• Define your requirements with the Project Manager\n• Watch as agents collaborate to build your solution\n\n**Quick Wins (First 30 minutes):**\n✅ Generate your first code snippet\n✅ Create automated tests\n✅ Set up a deployment pipeline\n✅ Experience multi-agent collaboration\n\nReady to start? I can guide you through the signup process! 🎉`;
+            }
+
+            generateContextualDefaultResponse(message) {
+                // Analyze the message for context clues
+                const messageLength = message.length;
+                const hasQuestionWords = /what|how|when|where|why|which|who|can|could|would|should|is|are|do|does/.test(message.toLowerCase());
+                
+                if (messageLength < 10) {
+                    return `👋 Hi there! I'm here to help you learn about Alpha 1 AI Platform. \n\nI can provide detailed information about:\n• Our 8 specialized AI agents 🤖\n• Pricing plans and features 💰\n• Technical capabilities and APIs 🔧\n• Getting started guides 🚀\n\nWhat would you like to know more about?`;
+                }
+                
+                if (hasQuestionWords) {
+                    return `🤔 That's a great question! While I don't have specific information about "${message}", I can help you with:\n\n🤖 **AI Agents** - Learn about our 8 specialized agents\n💰 **Pricing** - Compare our Starter, Professional, and Enterprise plans\n🚀 **Features** - Explore development automation and AI capabilities\n🔧 **Technical Info** - APIs, integrations, and architecture details\n💬 **Support** - Get help and connect with our team\n\nWhat aspect of Alpha 1 AI Platform interests you most?`;
+                }
+                
+                return `💬 I understand you're interested in "${message}". \n\nLet me help you discover how Alpha 1 AI Platform can assist with your needs:\n\n🎯 **For Development:** Our Senior Developer and QA Engineer agents can automate coding and testing\n📊 **For Project Management:** Our Project Manager agent handles planning and coordination\n🤖 **For AI/ML:** Our AI/ML Engineer creates custom models and processes data\n📝 **For Documentation:** Our Technical Writer creates comprehensive guides and docs\n\nWhich area would you like to explore further? I'm here to provide detailed, helpful information! 🚀`;
+            }
+
+
+        }
+
+        // Initialize the enhanced chatbot
+        const platformChatbot = new PlatformChatbot();
+
+        // Chat functionality
+        function toggleChat() {
+            const chatWindow = document.getElementById('chatWindow');
+            chatWindow.classList.toggle('active');
+        }
+
+        function handleChatKeypress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const messages = document.getElementById('chatMessages');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            const userMessage = document.createElement('div');
+            userMessage.className = 'chat-message user';
+            userMessage.textContent = message;
+            messages.appendChild(userMessage);
+            
+            // Clear input and show typing indicator
+            input.value = '';
+            const typingIndicator = document.createElement('div');
+            typingIndicator.className = 'chat-message bot typing';
+            typingIndicator.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+            messages.appendChild(typingIndicator);
+            messages.scrollTop = messages.scrollHeight;
+            
+            try {
+                // Get AI response from enhanced chatbot
+                const response = await platformChatbot.getAIResponse(message);
+                
+                // Remove typing indicator
+                messages.removeChild(typingIndicator);
+                
+                // Add bot response
+                const botMessage = document.createElement('div');
+                botMessage.className = 'chat-message bot';
+                botMessage.innerHTML = response.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                messages.appendChild(botMessage);
+                
+            } catch (error) {
+                // Remove typing indicator and show error
+                messages.removeChild(typingIndicator);
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'chat-message bot error';
+                errorMessage.textContent = 'Sorry, I encountered an error. Please try again or contact support.';
+                messages.appendChild(errorMessage);
+            }
+            
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add scroll effect to navbar
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 100) {
+                navbar.style.background = 'rgba(10, 10, 10, 0.98)';
+            } else {
+                navbar.style.background = 'rgba(10, 10, 10, 0.95)';
+            }
+        });
+    </script>
+</body>
+</html>

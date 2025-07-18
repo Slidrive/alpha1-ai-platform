@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alpha 1 API Test Suite</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #00ff88;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            background: rgba(26, 26, 46, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+        }
+        .test-section h2 {
+            color: #4ecdc4;
+            margin-top: 0;
+        }
+        button {
+            background: linear-gradient(135deg, #00ff88 0%, #4ecdc4 100%);
+            color: #0f0f23;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .results {
+            background: #1a1a2e;
+            border: 1px solid #333;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        .success { color: #00ff88; }
+        .error { color: #ff6b6b; }
+        .info { color: #4ecdc4; }
+        .warning { color: #ffe66d; }
+        .status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status.connected { background: #00ff88; color: #0f0f23; }
+        .status.disconnected { background: #ff6b6b; color: white; }
+        .status.authenticated { background: #4ecdc4; color: #0f0f23; }
+        .status.unauthenticated { background: #ffe66d; color: #0f0f23; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Alpha 1 AI Platform - API Test Suite</h1>
+        
+        <div class="test-section">
+            <h2>🔐 Authentication Tests</h2>
+            <button onclick="testLogin()">Test Login</button>
+            <button onclick="testRegister()">Test Register</button>
+            <button onclick="testLogout()">Logout</button>
+            <span id="authStatus" class="status unauthenticated">Not Authenticated</span>
+            <div id="authResults" class="results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📊 Dashboard & Analytics Tests</h2>
+            <button onclick="testDashboardMetrics()">Dashboard Metrics</button>
+            <button onclick="testPerformanceData()">Performance Data</button>
+            <button onclick="testSecurityEvents()">Security Events</button>
+            <button onclick="testHealthCheck()">Health Check</button>
+            <div id="dashboardResults" class="results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🤖 AI Agents Tests</h2>
+            <button onclick="testListAgents()">List Agents</button>
+            <button onclick="testAgentDetails()">Agent Details</button>
+            <button onclick="testChatWithAgent()">Chat with Agent</button>
+            <button onclick="testAgentStatus()">Agent Status</button>
+            <div id="agentsResults" class="results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📁 Projects Tests</h2>
+            <button onclick="testGetProjects()">Get Projects</button>
+            <button onclick="testCreateProject()">Create Project</button>
+            <button onclick="testUpdateProject()">Update Project</button>
+            <div id="projectsResults" class="results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🧠 AI Models Tests</h2>
+            <button onclick="testGetAIModels()">Get AI Models</button>
+            <button onclick="testTrainModel()">Train Model</button>
+            <div id="modelsResults" class="results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🔄 Run All Tests</h2>
+            <button onclick="runAllTests()" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%); color: white;">
+                Run Complete Test Suite
+            </button>
+            <div id="allTestsResults" class="results"></div>
+        </div>
+    </div>
+
+    <script>
+        let token = localStorage.getItem('token');
+        let baseUrl = 'http://localhost:5001';
+        
+        // Update auth status on page load
+        updateAuthStatus();
+
+        function updateAuthStatus() {
+            const statusEl = document.getElementById('authStatus');
+            if (token) {
+                statusEl.textContent = 'Authenticated';
+                statusEl.className = 'status authenticated';
+            } else {
+                statusEl.textContent = 'Not Authenticated';
+                statusEl.className = 'status unauthenticated';
+            }
+        }
+
+        function log(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type;
+            element.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
+            element.scrollTop = element.scrollHeight;
+        }
+
+        async function makeRequest(url, options = {}) {
+            try {
+                const response = await fetch(`${baseUrl}${url}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token && { 'Authorization': `Bearer ${token}` }),
+                        ...options.headers
+                    },
+                    ...options
+                });
+
+                const data = await response.json();
+                return { response, data, success: response.ok };
+            } catch (error) {
+                return { error: error.message, success: false };
+            }
+        }
+
+        // Authentication Tests
+        async function testLogin() {
+            log('authResults', 'Testing login with demo credentials...', 'info');
+            
+            const result = await makeRequest('/api/auth/login', {
+                method: 'POST',
+                body: JSON.stringify({
+                    email: 'admin@example.com',
+                    password: 'admin123'
+                })
+            });
+
+            if (result.success) {
+                token = result.data.access_token;
+                localStorage.setItem('token', token);
+                updateAuthStatus();
+                log('authResults', `✅ Login successful! User: ${result.data.user.name}`, 'success');
+                log('authResults', `Token: ${token.substring(0, 20)}...`, 'info');
+            } else {
+                log('authResults', `❌ Login failed: ${result.data?.message || result.error}`, 'error');
+            }
+        }
+
+        async function testRegister() {
+            log('authResults', 'Testing user registration...', 'info');
+            
+            const testEmail = `test${Date.now()}@example.com`;
+            const result = await makeRequest('/api/auth/register', {
+                method: 'POST',
+                body: JSON.stringify({
+                    name: 'Test User',
+                    email: testEmail,
+                    password: 'test123'
+                })
+            });
+
+            if (result.success) {
+                log('authResults', `✅ Registration successful! User: ${result.data.user.name}`, 'success');
+            } else {
+                log('authResults', `❌ Registration failed: ${result.data?.message || result.error}`, 'error');
+            }
+        }
+
+        function testLogout() {
+            token = null;
+            localStorage.removeItem('token');
+            updateAuthStatus();
+            log('authResults', '✅ Logged out successfully', 'success');
+        }
+
+        // Dashboard Tests
+        async function testDashboardMetrics() {
+            log('dashboardResults', 'Testing dashboard metrics...', 'info');
+            
+            const result = await makeRequest('/api/dashboard/metrics');
+            
+            if (result.success) {
+                log('dashboardResults', '✅ Dashboard metrics retrieved successfully', 'success');
+                log('dashboardResults', `CPU: ${result.data.cpuUsage}%, Memory: ${result.data.memoryUsage}%`, 'info');
+                log('dashboardResults', `Active Connections: ${result.data.activeConnections}`, 'info');
+            } else {
+                log('dashboardResults', `❌ Failed to get metrics: ${result.data?.message || result.error}`, 'error');
+            }
+        }
+
+        async function testPerformanceData() {
+            log('dashboardResults', 'Testing performance data...', 'info');
+            
+            const result = await makeRequest('/api/dashboard/performance-data');
+            
+            if (result.success) {
+                log('dashboardResults', '✅ Performance data retrieved successfully', 'success');
+                log('dashboardResults', `Data points: ${result.data.performance_data?.length || 0}`, 'info');
+            } else {
+                log('dashboardResults', `❌ Failed to get performance data: ${result.data?.message || result.error}`, 'error');
+            }
+        }
+
+        async function testSecurityEvents() {
+            log('dashboardResults', 'Testing security events...', 'info');
+            
+            const result = await makeRequest('/api/analytics/security-events');
+            
+            if (result.success) {
+                log('dashboardResults', '✅ Security events retrieved successfully', 'success');
+                log('dashboardResults', `Events count: ${result.data.length}`, 'info');
+            } else {
+                log('dashboardResults', `❌ Failed to get security events: ${result.data?.message || result.error}`, 'error');
+            }
+        }
+
+        async function testHealthCheck() {
+            log('dashboardResults', 'Testing health check...', 'info');
+            
+            const result = await makeRequest('/api/health');
+            
+            if (result.success) {
+                log('dashboardResults', '✅ Health check passed', 'success');
+                log('dashboardResults', `Status: ${result.data.status}, Version: ${result.data.version}`, 'info');
+                log('dashboardResults', `Database: ${result.data.services.database}, Redis: ${result.data.services.redis}`, 'info');
+            } else {
+                log('dashboardResults', `❌ Health check failed: ${result.error}`, 'error');
+            }
+        }
+
+        // Agents Tests
+        async function testListAgents() {
+            log('agentsResults', 'Testing list agents...', 'info');
+            
+            const result = await makeRequest('/api/agents');
+            
+            if (result.success) {
+                log('agentsResults', '✅ Agents list retrieved successfully', 'success');
+                log('agentsResults', `Total agents: ${result.data.total_count}, Active: ${result.data.active_count}`, 'info');
+            } else {
+                log('agentsResults', `❌ Failed to get agents: ${result.data?.message || result.error}`, 'error');
+            }
+        }
+
+        async function testAgentDetails() {
+            log('agentsResults', 'Testing agent details...', 'info');
+            
+            const result = await makeRequest('/api/agents/project-manager');
+            
+            if (result.success) {
+                log('agentsResults', '✅ Agent details retrieved successfully', 'success');
+                log('agentsResults', `Agent: ${result.data.agent.name}, Status: ${result.data.agent.status}`, 'info');
+            } else {
+                log('agentsResults', `❌ Failed to get agent details: ${result.data?.message || result.error}`, 'error');
+            }
+        }
+
+        async function testChatWithAgent() {
+            log('agentsResults', 'Testing chat with agent...', 'info');
+            
+            const result = await makeRequest('/api/agents/project-manager/chat', {
+                method: 'POST',
+                body: JSON.stringify({
+                    message: 'Hello, can you help me with project planning?',
+                    session_id: 'test-session-' + Date.now()
+                })
+            });
+            
+            if (result.success) {
+                log('agentsResults', '✅ Chat with agent successful', 'success');
+                log('agentsResults', `Response: ${result.data.response.substring(0, 100)}...`, 'info');
+            } else {
+                log('agentsResults', `❌ Failed to chat with agent: ${result.data?.message || result.error}`, 'error');
+            }
+        }
+
+        async function testAgentStatus() {
+            log('agentsResults', 'Testing agent status...', 'info');
+            
+            const result = await makeRequest('/api/agents/status');
+            
+            if (result.success) {
+                log('agentsResults', '✅ Agent status retrieved successfully', 'success');
+                log('agentsResults', `Active agents: ${result.data.summary.active_agents}`, 'info');
+                log('agentsResults', `Total conversations: ${result.data.summary.total_conversations}`, 'info');
+            } else {
+                log('agentsResults', `❌ Failed to get agent status: ${result.data?.message || result.error}`, 'error');
+            }
+        }
+
+        // Projects Tests
+        async function testGetProjects() {
+            log('projectsResults', 'Testing get projects...', 'info');
+            
+            const result = await makeRequest('/api/projects');
+            
+            if (result.success) {
+                log('projectsResults', '✅ Projects retrieved successfully', 'success');
+                log('projectsResults', `Projects count: ${result.data.length}`, 'info');
+            } else {
+                log('projectsResults', `❌ Failed to get projects: ${result.data?.message || result.error}`, 'error');
+            }
+        }
+
+        async function testCreateProject() {
+            log('projectsResults', 'Testing create project...', 'info');
+            
+            const result = await makeRequest('/api/projects', {
+                method: 'POST',
+                body: JSON.stringify({
+                    name: `Test Project ${Date.now()}`,
+                    description: 'A test project created via API',
+                    type: 'test'
+                })
+            });
+            
+            if (result.success) {
+                log('projectsResults', '✅ Project created successfully', 'success');
+                log('projectsResults', `Project ID: ${result.data.project.id}`, 'info');
+                window.testProjectId = result.data.project.id;
+            } else {
+                log('projectsResults', `❌ Failed to create project: ${result.data?.message || result.error}`, 'error');
+            }
+        }
+
+        async function testUpdateProject() {
+            if (!window.testProjectId) {
+                log('projectsResults', '⚠️ No test project ID available. Create a project first.', 'warning');
+                return;
+            }
+            
+            log('projectsResults', 'Testing update project...', 'info');
+            
+            const result = await makeRequest(`/api/projects/${window.testProjectId}`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    name: `Updated Test Project ${Date.now()}`,
+                    description: 'Updated description',
+                    status: 'active',
+                    progress: 50
+                })
+            });
+            
+            if (result.success) {
+                log('projectsResults', '✅ Project updated successfully', 'success');
+            } else {
+                log('projectsResults', `❌ Failed to update project: ${result.data?.message || result.error}`, 'error');
+            }
+        }
+
+        // AI Models Tests
+        async function testGetAIModels() {
+            log('modelsResults', 'Testing get AI models...', 'info');
+            
+            const result = await makeRequest('/api/ai-models');
+            
+            if (result.success) {
+                log('modelsResults', '✅ AI models retrieved successfully', 'success');
+                log('modelsResults', `Models count: ${result.data.length}`, 'info');
+            } else {
+                log('modelsResults', `❌ Failed to get AI models: ${result.data?.message || result.error}`, 'error');
+            }
+        }
+
+        async function testTrainModel() {
+            log('modelsResults', 'Testing train model...', 'info');
+            
+            const result = await makeRequest('/api/ai-models/train', {
+                method: 'POST',
+                body: JSON.stringify({
+                    model_name: `Test Model ${Date.now()}`
+                })
+            });
+            
+            if (result.success) {
+                log('modelsResults', '✅ Model training initiated successfully', 'success');
+                log('modelsResults', `Accuracy: ${result.data.metrics.accuracy}%`, 'info');
+            } else {
+                log('modelsResults', `❌ Failed to train model: ${result.data?.message || result.error}`, 'error');
+            }
+        }
+
+        // Run All Tests
+        async function runAllTests() {
+            const allResults = document.getElementById('allTestsResults');
+            allResults.innerHTML = '';
+            
+            log('allTestsResults', '🚀 Starting comprehensive test suite...', 'info');
+            
+            // Authentication
+            log('allTestsResults', '--- Authentication Tests ---', 'info');
+            await testLogin();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Dashboard
+            log('allTestsResults', '--- Dashboard Tests ---', 'info');
+            await testDashboardMetrics();
+            await testPerformanceData();
+            await testSecurityEvents();
+            await testHealthCheck();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Agents
+            log('allTestsResults', '--- Agents Tests ---', 'info');
+            await testListAgents();
+            await testAgentDetails();
+            await testChatWithAgent();
+            await testAgentStatus();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Projects
+            log('allTestsResults', '--- Projects Tests ---', 'info');
+            await testGetProjects();
+            await testCreateProject();
+            await testUpdateProject();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // AI Models
+            log('allTestsResults', '--- AI Models Tests ---', 'info');
+            await testGetAIModels();
+            await testTrainModel();
+            
+            log('allTestsResults', '✅ All tests completed!', 'success');
+        }
+    </script>
+</body>
+</html>

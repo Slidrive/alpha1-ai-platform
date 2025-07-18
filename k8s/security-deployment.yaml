@@ -1,0 +1,537 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: security
+  labels:
+    name: security
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: alpha1-backend
+  namespace: default
+  labels:
+    app: alpha1-backend
+automountServiceAccountToken: true
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: alpha1-frontend
+  namespace: default
+  labels:
+    app: alpha1-frontend
+automountServiceAccountToken: false
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default
+  name: alpha1-backend-role
+rules:
+- apiGroups: [""]
+  resources: ["configmaps", "secrets"]
+  verbs: ["get", "list"]
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list"]
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: alpha1-backend-rolebinding
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: alpha1-backend
+  namespace: default
+roleRef:
+  kind: Role
+  name: alpha1-backend-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: alpha1-monitoring-reader
+rules:
+- apiGroups: [""]
+  resources: ["nodes", "nodes/metrics", "services", "endpoints", "pods"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "replicasets"]
+  verbs: ["get", "list", "watch"]
+- nonResourceURLs: ["/metrics"]
+  verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: alpha1-monitoring-reader
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: alpha1-monitoring-reader
+subjects:
+- kind: ServiceAccount
+  name: prometheus
+  namespace: monitoring
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: alpha1-backend-network-policy
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: alpha1-backend
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: alpha1-frontend
+    - namespaceSelector:
+        matchLabels:
+          name: monitoring
+    ports:
+    - protocol: TCP
+      port: 5000
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: database
+    ports:
+    - protocol: TCP
+      port: 5432
+    - protocol: TCP
+      port: 6379
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 53
+    - protocol: UDP
+      port: 53
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 443
+    - protocol: TCP
+      port: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: alpha1-frontend-network-policy
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: alpha1-frontend
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from: []
+    ports:
+    - protocol: TCP
+      port: 80
+    - protocol: TCP
+      port: 443
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: alpha1-backend
+    ports:
+    - protocol: TCP
+      port: 5000
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 53
+    - protocol: UDP
+      port: 53
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-all-default
+  namespace: default
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: alpha1-tls-secret
+  namespace: default
+type: kubernetes.io/tls
+data:
+  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0=  # Placeholder certificate
+  tls.key: LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCi0tLS0tRU5EIFBSSVZBVEUgS0VZLS0tLS0=  # Placeholder private key
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: alpha1-api-keys
+  namespace: default
+type: Opaque
+data:
+  jwt-secret: YWxwaGExX2p3dF9zZWNyZXRfa2V5XzEyMw==  # alpha1_jwt_secret_key_123 (base64 encoded)
+  encryption-key: YWxwaGExX2VuY3J5cHRpb25fa2V5XzEyMw==  # alpha1_encryption_key_123 (base64 encoded)
+  api-key: YWxwaGExX2FwaV9rZXlfMTIz  # alpha1_api_key_123 (base64 encoded)
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: security-scanner
+  namespace: security
+  labels:
+    app: security-scanner
+    component: security
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: security-scanner
+  template:
+    metadata:
+      labels:
+        app: security-scanner
+        component: security
+    spec:
+      serviceAccountName: security-scanner
+      containers:
+      - name: security-scanner
+        image: owasp/zap2docker-stable:latest
+        command: ["/bin/bash"]
+        args:
+        - -c
+        - |
+          echo "Starting OWASP ZAP Security Scanner..."
+          # Start ZAP in daemon mode
+          zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true
+        ports:
+        - containerPort: 8080
+          name: zap-api
+        env:
+        - name: ZAP_PORT
+          value: "8080"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "200m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /JSON/core/view/version/
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /JSON/core/view/version/
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1000
+          capabilities:
+            drop:
+            - ALL
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 1000
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: security-scanner-service
+  namespace: security
+  labels:
+    app: security-scanner
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    targetPort: 8080
+    protocol: TCP
+    name: zap-api
+  selector:
+    app: security-scanner
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: security-scanner
+  namespace: security
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: security-scan-job
+  namespace: security
+spec:
+  schedule: "0 2 * * *"  # Run daily at 2 AM
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: security-scanner
+          containers:
+          - name: security-scan
+            image: owasp/zap2docker-stable:latest
+            command: ["/bin/bash"]
+            args:
+            - -c
+            - |
+              echo "Starting automated security scan..."
+              
+              # Wait for the main application to be ready
+              until curl -f http://alpha1-frontend-service.default.svc.cluster.local; do
+                echo "Waiting for application to be ready..."
+                sleep 30
+              done
+              
+              # Run baseline scan
+              zap-baseline.py -t http://alpha1-frontend-service.default.svc.cluster.local -J /tmp/baseline-report.json
+              
+              # Run API scan if backend is available
+              if curl -f http://alpha1-backend-service.default.svc.cluster.local:5000/health; then
+                zap-api-scan.py -t http://alpha1-backend-service.default.svc.cluster.local:5000/api -f openapi -J /tmp/api-report.json
+              fi
+              
+              echo "Security scan completed. Reports generated."
+            env:
+            - name: ZAP_PROXY
+              value: "http://security-scanner-service:8080"
+            resources:
+              requests:
+                memory: "256Mi"
+                cpu: "100m"
+              limits:
+                memory: "512Mi"
+                cpu: "300m"
+            securityContext:
+              allowPrivilegeEscalation: false
+              runAsNonRoot: true
+              runAsUser: 1000
+              capabilities:
+                drop:
+                - ALL
+          restartPolicy: OnFailure
+          securityContext:
+            fsGroup: 1000
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: security-policies
+  namespace: security
+data:
+  security-policy.yaml: |
+    # Alpha1 AI Platform Security Policies
+    
+    # Password Policy
+    password_policy:
+      min_length: 12
+      require_uppercase: true
+      require_lowercase: true
+      require_numbers: true
+      require_special_chars: true
+      max_age_days: 90
+      history_count: 5
+    
+    # Session Policy
+    session_policy:
+      timeout_minutes: 30
+      max_concurrent_sessions: 3
+      require_2fa: true
+      secure_cookies: true
+    
+    # API Security
+    api_security:
+      rate_limit_per_minute: 100
+      require_authentication: true
+      require_https: true
+      cors_allowed_origins:
+        - "https://alpha1.example.com"
+        - "https://app.alpha1.example.com"
+    
+    # Data Protection
+    data_protection:
+      encryption_at_rest: true
+      encryption_in_transit: true
+      data_retention_days: 365
+      backup_encryption: true
+    
+    # Audit Logging
+    audit_logging:
+      enabled: true
+      log_authentication: true
+      log_authorization: true
+      log_data_access: true
+      log_admin_actions: true
+      retention_days: 90
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: security-monitoring
+  namespace: security
+data:
+  falco-rules.yaml: |
+    # Custom Falco rules for Alpha1 AI Platform
+    
+    - rule: Unauthorized API Access
+      desc: Detect unauthorized access to API endpoints
+      condition: >
+        k8s_audit and
+        ka.verb in (get, post, put, delete) and
+        ka.uri.path startswith "/api/" and
+        not ka.user.name in (alpha1-backend, system:serviceaccount:default:alpha1-backend)
+      output: >
+        Unauthorized API access detected
+        (user=%ka.user.name verb=%ka.verb uri=%ka.uri.path)
+      priority: WARNING
+    
+    - rule: Suspicious Database Access
+      desc: Detect suspicious database access patterns
+      condition: >
+        spawned_process and
+        proc.name in (psql, redis-cli) and
+        not container.image.repository in (postgres, redis)
+      output: >
+        Suspicious database access detected
+        (command=%proc.cmdline container=%container.name)
+      priority: WARNING
+    
+    - rule: Privilege Escalation Attempt
+      desc: Detect attempts to escalate privileges
+      condition: >
+        spawned_process and
+        proc.name in (sudo, su, chmod, chown) and
+        container.name startswith "alpha1-"
+      output: >
+        Privilege escalation attempt detected
+        (command=%proc.cmdline container=%container.name)
+      priority: CRITICAL
+---
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: alpha1-restricted-psp
+  namespace: security
+spec:
+  privileged: false
+  allowPrivilegeEscalation: false
+  requiredDropCapabilities:
+    - ALL
+  volumes:
+    - 'configMap'
+    - 'emptyDir'
+    - 'projected'
+    - 'secret'
+    - 'downwardAPI'
+    - 'persistentVolumeClaim'
+  runAsUser:
+    rule: 'MustRunAsNonRoot'
+  seLinux:
+    rule: 'RunAsAny'
+  fsGroup:
+    rule: 'RunAsAny'
+  readOnlyRootFilesystem: false
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: alpha1-restricted-psp-user
+rules:
+- apiGroups: ['policy']
+  resources: ['podsecuritypolicies']
+  verbs: ['use']
+  resourceNames:
+  - alpha1-restricted-psp
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: alpha1-restricted-psp-binding
+roleRef:
+  kind: ClusterRole
+  name: alpha1-restricted-psp-user
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+- kind: ServiceAccount
+  name: alpha1-backend
+  namespace: default
+- kind: ServiceAccount
+  name: alpha1-frontend
+  namespace: default
+- kind: ServiceAccount
+  name: security-scanner
+  namespace: security
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: security-namespace-policy
+  namespace: security
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: default
+    - namespaceSelector:
+        matchLabels:
+          name: monitoring
+    ports:
+    - protocol: TCP
+      port: 8080
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: default
+    ports:
+    - protocol: TCP
+      port: 80
+    - protocol: TCP
+      port: 443
+    - protocol: TCP
+      port: 5000
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 53
+    - protocol: UDP
+      port: 53

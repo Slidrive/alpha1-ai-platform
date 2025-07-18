@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Frontend API Test</title>
+</head>
+<body>
+    <h1>Alpha1 Platform API Test</h1>
+    <div id="results"></div>
+    <button onclick="testLogin()">Test Login</button>
+    <button onclick="testProjects()">Test Projects</button>
+    
+    <script>
+        let token = null;
+        
+        async function testLogin() {
+            const results = document.getElementById('results');
+            results.innerHTML += '<p>Testing login...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:5001/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: 'admin@example.com',
+                        password: 'admin123'
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    token = data.access_token;
+                    results.innerHTML += '<p style="color: green;">Login successful! Token: ' + token.substring(0, 20) + '...</p>';
+                } else {
+                    const error = await response.text();
+                    results.innerHTML += '<p style="color: red;">Login failed: ' + response.status + ' - ' + error + '</p>';
+                }
+            } catch (error) {
+                results.innerHTML += '<p style="color: red;">Login error: ' + error.message + '</p>';
+            }
+        }
+        
+        async function testProjects() {
+            const results = document.getElementById('results');
+            
+            if (!token) {
+                results.innerHTML += '<p style="color: orange;">Please login first!</p>';
+                return;
+            }
+            
+            results.innerHTML += '<p>Testing projects API...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:5001/api/projects', {
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    results.innerHTML += '<p style="color: green;">Projects API successful! Found ' + data.length + ' projects</p>';
+                } else {
+                    const error = await response.text();
+                    results.innerHTML += '<p style="color: red;">Projects API failed: ' + response.status + ' - ' + error + '</p>';
+                }
+            } catch (error) {
+                results.innerHTML += '<p style="color: red;">Projects API error: ' + error.message + '</p>';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+# Default values for bidzpro
+backend:
+  replicas: 2
+  image:
+    repository: bidzpro-backend
+    tag: latest
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+
+frontend:
+  replicas: 2
+  image:
+    repository: bidzpro-frontend
+    tag: latest
+  apiUrl: http://backend-service
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+postgresql:
+  enabled: true
+  auth:
+    database: bidzpro
+    username: bidzpro
+    password: changeme
+
+redis:
+  enabled: true
+  auth:
+    password: changeme
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: bidzpro.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+          service: frontend
+        - path: /api
+          pathType: Prefix
+          service: backend

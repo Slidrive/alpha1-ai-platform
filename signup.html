@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Alpha 1 AI Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=USD"></script>
+    <style>
+        :root {
+            --primary-dark: #0a0a0a;
+            --secondary-dark: #1a1a1a;
+            --tertiary-dark: #2a2a2a;
+            --accent-blue: #00d4ff;
+            --accent-blue-hover: #00b8e6;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-muted: #808080;
+            --border-color: #333333;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --shadow-primary: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --shadow-secondary: 0 4px 16px rgba(0, 0, 0, 0.2);
+            --gradient-primary: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            --gradient-dark: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            --success-color: #00ff88;
+            --warning-color: #ffaa00;
+            --error-color: #ff4757;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--primary-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-blue);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-top: 100px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 2rem 2rem;
+        }
+
+        .signup-container {
+            max-width: 1200px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .plan-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .plan-card {
+            background: var(--glass-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .plan-card:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+        }
+
+        .plan-card.selected {
+            border-color: var(--accent-blue);
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .plan-card.popular::before {
+            content: 'Most Popular';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gradient-primary);
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .plan-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-price {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-period {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .plan-features {
+            list-style: none;
+            text-align: left;
+        }
+
+        .plan-features li {
+            padding: 0.25rem 0;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .plan-features li::before {
+            content: '✓';
+            color: var(--success-color);
+            margin-right: 0.5rem;
+        }
+
+        .billing-summary {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .summary-item.total {
+            border-top: 1px solid var(--border-color);
+            padding-top: 0.5rem;
+            margin-top: 1rem;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .card-input-group {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .success-message {
+            color: var(--success-color);
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .loading {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-top: 2px solid var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Plan Summary */
+        .plan-summary {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 120px;
+        }
+
+        .summary-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .summary-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .plan-details {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .plan-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-price {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .plan-features {
+            list-style: none;
+        }
+
+        .plan-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .feature-check {
+            color: var(--success-color);
+            font-size: 0.8rem;
+        }
+
+        .billing-info {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid var(--accent-blue);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .billing-info h4 {
+            color: var(--accent-blue);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .billing-info p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Signup Form */
+        .signup-form {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .form-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-subtitle {
+            color: var(--text-secondary);
+        }
+
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--tertiary-dark);
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .step.active {
+            background: var(--gradient-primary);
+            border-color: var(--accent-blue);
+            color: white;
+        }
+
+        .step.completed {
+            background: var(--success-color);
+            border-color: var(--success-color);
+            color: var(--primary-dark);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--tertiary-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .form-input.error {
+            border-color: var(--error-color);
+        }
+
+        .form-error {
+            color: var(--error-color);
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: var(--shadow-secondary);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-primary);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--glass-bg);
+            color: var(--text-primary);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        /* Payment Methods */
+        .payment-methods {
+            margin-bottom: 2rem;
+        }
+
+        .payment-method {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .payment-method:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .payment-method.selected {
+            border-color: var(--accent-blue);
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .payment-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .payment-info h4 {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .payment-info p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .payment-radio {
+            margin-left: auto;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .payment-method.selected .payment-radio {
+            border-color: var(--accent-blue);
+        }
+
+        .payment-method.selected .payment-radio::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+        }
+
+        /* Stripe Elements */
+        .stripe-element {
+            background: var(--tertiary-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .stripe-element.StripeElement--focus {
+            border-color: var(--accent-blue);
+        }
+
+        .stripe-element.StripeElement--invalid {
+            border-color: var(--error-color);
+        }
+
+        /* PayPal Container */
+        .paypal-container {
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .paypal-container.active {
+            display: block;
+        }
+
+        /* Success Message */
+        .success-message {
+            text-align: center;
+            padding: 2rem;
+            display: none;
+        }
+
+        .success-message.active {
+            display: block;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--success-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+            color: var(--primary-dark);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .signup-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .plan-summary {
+                position: static;
+                order: 2;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .plan-selection {
+                grid-template-columns: 1fr;
+            }
+
+            .payment-methods {
+                grid-template-columns: 1fr;
+            }
+
+            .card-input-group {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Alpha 1 AI</a>
+            <ul class="nav-links">
+                <li><a href="index.html#features">Features</a></li>
+                <li><a href="pricing.html">Pricing</a></li>
+                <li><a href="#docs">Documentation</a></li>
+                <li><a href="#support">Support</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="signup-container">
+            <div class="signup-card">
+                <a href="index.html" class="back-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Home
+                </a>
+
+                <div class="signup-header">
+                    <div class="logo">Alpha 1 AI</div>
+                    <h1 class="signup-title">Create Your Account</h1>
+                    <p class="signup-subtitle">Join thousands of developers building the future with AI</p>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="progress-bar">
+                    <div class="progress-step active" data-step="1">
+                        <i class="fas fa-user"></i>
+                        Account
+                    </div>
+                    <div class="progress-step" data-step="2">
+                        <i class="fas fa-credit-card"></i>
+                        Plan & Payment
+                    </div>
+                    <div class="progress-step" data-step="3">
+                        <i class="fas fa-check"></i>
+                        Complete
+                    </div>
+                </div>
+
+                <!-- Step 1: Account Information -->
+                <div id="step1" class="step-content active">
+                    <div class="social-login">
+                        <a href="#" class="social-btn" onclick="signupWithGoogle()">
+                            <i class="fab fa-google"></i>
+                            Google
+                        </a>
+                        <a href="#" class="social-btn" onclick="signupWithGitHub()">
+                            <i class="fab fa-github"></i>
+                            GitHub
+                        </a>
+                    </div>
+
+                    <div class="divider">
+                        <span>or continue with email</span>
+                    </div>
+
+                    <form id="accountForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label" for="firstName">First Name</label>
+                                <input type="text" id="firstName" name="firstName" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="lastName">Last Name</label>
+                                <input type="text" id="lastName" name="lastName" class="form-input" required>
+                            </div>
+                            <div class="form-group full-width">
+                                <label class="form-label" for="email">Email Address</label>
+                                <input type="email" id="email" name="email" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="password">Password</label>
+                                <input type="password" id="password" name="password" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="confirmPassword">Confirm Password</label>
+                                <input type="password" id="confirmPassword" name="confirmPassword" class="form-input" required>
+                            </div>
+                            <div class="form-group full-width">
+                                <label class="form-label" for="company">Company (Optional)</label>
+                                <input type="text" id="company" name="company" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="role">Role</label>
+                                <select id="role" name="role" class="form-select" required>
+                                    <option value="">Select your role</option>
+                                    <option value="developer">Developer</option>
+                                    <option value="manager">Project Manager</option>
+                                    <option value="entrepreneur">Entrepreneur</option>
+                                    <option value="agency">Agency Owner</option>
+                                    <option value="student">Student</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="teamSize">Team Size</label>
+                                <select id="teamSize" name="teamSize" class="form-select" required>
+                                    <option value="">Select team size</option>
+                                    <option value="1">Just me</option>
+                                    <option value="2-5">2-5 people</option>
+                                    <option value="6-20">6-20 people</option>
+                                    <option value="21-50">21-50 people</option>
+                                    <option value="50+">50+ people</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="terms" name="terms" class="checkbox" required>
+                            <label for="terms" class="checkbox-label">
+                                I agree to the <a href="#" target="_blank">Terms of Service</a> and 
+                                <a href="#" target="_blank">Privacy Policy</a>
+                            </label>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="newsletter" name="newsletter" class="checkbox">
+                            <label for="newsletter" class="checkbox-label">
+                                Send me product updates and AI development tips
+                            </label>
+                        </div>
+
+                        <div class="step-actions">
+                            <button type="button" class="btn btn-primary" onclick="nextStep(2)">
+                                Continue to Plan Selection
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="login-link">
+                        Already have an account? <a href="login.html">Sign in</a>
+                    </div>
+                </div>
+
+                <!-- Step 2: Plan Selection & Payment -->
+                <div id="step2" class="step-content">
+                    <h2 style="text-align: center; margin-bottom: 2rem;">Choose Your Plan</h2>
+                    
+                    <div class="plan-selection">
+                        <div class="plan-card" data-plan="starter" onclick="selectPlan('starter')">
+                            <div class="plan-name">Starter</div>
+                            <div class="plan-price">$29</div>
+                            <div class="plan-period">per month</div>
+                            <ul class="plan-features">
+                                <li>3 AI Agents</li>
+                                <li>5 Projects</li>
+                                <li>Basic Analytics</li>
+                                <li>Email Support</li>
+                                <li>5GB Storage</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="plan-card popular" data-plan="professional" onclick="selectPlan('professional')">
+                            <div class="plan-name">Professional</div>
+                            <div class="plan-price">$99</div>
+                            <div class="plan-period">per month</div>
+                            <ul class="plan-features">
+                                <li>8 AI Agents</li>
+                                <li>Unlimited Projects</li>
+                                <li>Advanced Analytics</li>
+                                <li>Priority Support</li>
+                                <li>50GB Storage</li>
+                                <li>Custom Integrations</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="plan-card" data-plan="enterprise" onclick="selectPlan('enterprise')">
+                            <div class="plan-name">Enterprise</div>
+                            <div class="plan-price">Custom</div>
+                            <div class="plan-period">contact sales</div>
+                            <ul class="plan-features">
+                                <li>Unlimited Agents</li>
+                                <li>White-label Solution</li>
+                                <li>Dedicated Support</li>
+                                <li>Custom Development</li>
+                                <li>Unlimited Storage</li>
+                                <li>SLA Guarantee</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div id="paymentSection" style="display: none;">
+                        <h3 style="margin-bottom: 1.5rem;">Payment Method</h3>
+                        
+                        <div class="payment-methods">
+                            <div class="payment-method selected" data-method="card" onclick="selectPaymentMethod('card')">
+                                <div class="payment-icon">
+                                    <i class="fas fa-credit-card"></i>
+                                </div>
+                                <div class="payment-name">Credit Card</div>
+                                <div class="payment-description">Visa, Mastercard, Amex</div>
+                            </div>
+                            
+                            <div class="payment-method" data-method="paypal" onclick="selectPaymentMethod('paypal')">
+                                <div class="payment-icon">
+                                    <i class="fab fa-paypal"></i>
+                                </div>
+                                <div class="payment-name">PayPal</div>
+                                <div class="payment-description">Pay with PayPal</div>
+                            </div>
+                            
+                            <div class="payment-method" data-method="stripe" onclick="selectPaymentMethod('stripe')">
+                                <div class="payment-icon">
+                                    <i class="fas fa-bolt"></i>
+                                </div>
+                                <div class="payment-name">Stripe</div>
+                                <div class="payment-description">Secure payment</div>
+                            </div>
+                        </div>
+
+                        <!-- Credit Card Form -->
+                        <div id="cardPayment" class="payment-form">
+                            <div class="form-group">
+                                <label class="form-label">Card Information</label>
+                                <div class="card-input-group">
+                                    <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" class="form-input" maxlength="19">
+                                    <input type="text" id="cardExpiry" placeholder="MM/YY" class="form-input" maxlength="5">
+                                    <input type="text" id="cardCvc" placeholder="CVC" class="form-input" maxlength="4">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="cardName">Cardholder Name</label>
+                                <input type="text" id="cardName" class="form-input" required>
+                            </div>
+                            
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="billingCountry">Country</label>
+                                    <select id="billingCountry" class="form-select" required>
+                                        <option value="">Select country</option>
+                                        <option value="US">United States</option>
+                                        <option value="CA">Canada</option>
+                                        <option value="GB">United Kingdom</option>
+                                        <option value="AU">Australia</option>
+                                        <option value="DE">Germany</option>
+                                        <option value="FR">France</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="billingZip">ZIP Code</label>
+                                    <input type="text" id="billingZip" class="form-input" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PayPal Payment -->
+                        <div id="paypalPayment" class="payment-form" style="display: none;">
+                            <div id="paypal-button-container"></div>
+                        </div>
+
+                        <!-- Stripe Payment -->
+                        <div id="stripePayment" class="payment-form" style="display: none;">
+                            <div id="stripe-card-element"></div>
+                            <div id="stripe-card-errors" role="alert"></div>
+                        </div>
+
+                        <!-- Billing Summary -->
+                        <div class="billing-summary">
+                            <div class="summary-title">Order Summary</div>
+                            <div class="summary-item">
+                                <span id="selectedPlanName">Professional Plan</span>
+                                <span id="selectedPlanPrice">$99.00</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Tax</span>
+                                <span id="taxAmount">$9.90</span>
+                            </div>
+                            <div class="summary-item total">
+                                <span>Total</span>
+                                <span id="totalAmount">$108.90</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-actions">
+                        <button type="button" class="btn btn-secondary" onclick="previousStep(1)">
+                            <i class="fas fa-arrow-left"></i>
+                            Back
+                        </button>
+                        <button type="button" class="btn btn-primary" id="completePayment" onclick="processPayment()" disabled>
+                            <span class="loading">
+                                <div class="spinner"></div>
+                                Processing...
+                            </span>
+                            <span class="btn-text">Complete Payment</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Completion -->
+                <div id="step3" class="step-content">
+                    <div style="text-align: center; padding: 2rem 0;">
+                        <div style="font-size: 4rem; color: var(--success-color); margin-bottom: 1rem;">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h2 style="margin-bottom: 1rem;">Welcome to Alpha 1 AI!</h2>
+                        <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                            Your account has been created successfully. You can now access your dashboard and start building with AI agents.
+                        </p>
+                        
+                        <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem;">
+                            <h3 style="margin-bottom: 1rem;">Next Steps:</h3>
+                            <ul style="list-style: none; text-align: left;">
+                                <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-check" style="color: var(--success-color);"></i>
+                                    Set up your first AI agent
+                                </li>
+                                <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-check" style="color: var(--success-color);"></i>
+                                    Create your first project
+                                </li>
+                                <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-check" style="color: var(--success-color);"></i>
+                                    Explore the platform features
+                                </li>
+                                <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-check" style="color: var(--success-color);"></i>
+                                    Join our community
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="step-actions">
+                            <a href="dashboard.html" class="btn btn-primary">
+                                <i class="fas fa-tachometer-alt"></i>
+                                Go to Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let currentStep = 1;
+        let selectedPlan = null;
+        let selectedPaymentMethod = 'card';
+        let stripe = null;
+        let cardElement = null;
+
+        // Initialize Stripe
+        if (typeof Stripe !== 'undefined') {
+            stripe = Stripe('pk_test_your_stripe_publishable_key');
+            const elements = stripe.elements();
+            cardElement = elements.create('card');
+        }
+
+        function nextStep(step) {
+            if (validateCurrentStep()) {
+                currentStep = step;
+                updateStepDisplay();
+            }
+        }
+
+        function previousStep(step) {
+            currentStep = step;
+            updateStepDisplay();
+        }
+
+        function updateStepDisplay() {
+            // Hide all step contents
+            document.querySelectorAll('.step-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Show current step
+            document.getElementById(`step${currentStep}`).classList.add('active');
+
+            // Update progress bar
+            document.querySelectorAll('.progress-step').forEach((step, index) => {
+                step.classList.remove('active', 'completed');
+                if (index + 1 < currentStep) {
+                    step.classList.add('completed');
+                } else if (index + 1 === currentStep) {
+                    step.classList.add('active');
+                }
+            });
+        }
+
+        function validateCurrentStep() {
+            if (currentStep === 1) {
+                const form = document.getElementById('accountForm');
+                const formData = new FormData(form);
+                
+                // Basic validation
+                const required = ['firstName', 'lastName', 'email', 'password', 'confirmPassword', 'role', 'teamSize'];
+                for (const field of required) {
+                    if (!formData.get(field)) {
+                        alert(`Please fill in the ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
+                        return false;
+                    }
+                }
+
+                // Password validation
+                if (formData.get('password') !== formData.get('confirmPassword')) {
+                    alert('Passwords do not match');
+                    return false;
+                }
+
+                // Terms validation
+                if (!formData.get('terms')) {
+                    alert('Please accept the terms and conditions');
+                    return false;
+                }
+
+                return true;
+            }
+            return true;
+        }
+
+        function selectPlan(planType) {
+            selectedPlan = planType;
+            
+            // Update UI
+            document.querySelectorAll('.plan-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.querySelector(`[data-plan="${planType}"]`).classList.add('selected');
+
+            // Show payment section for non-enterprise plans
+            if (planType !== 'enterprise') {
+                document.getElementById('paymentSection').style.display = 'block';
+                document.getElementById('completePayment').disabled = false;
+                updateBillingSummary(planType);
+            } else {
+                document.getElementById('paymentSection').style.display = 'none';
+                document.getElementById('completePayment').disabled = true;
+                // Redirect to contact sales
+                alert('Please contact our sales team for enterprise pricing');
+            }
+        }
+
+        function selectPaymentMethod(method) {
+            selectedPaymentMethod = method;
+            
+            // Update UI
+            document.querySelectorAll('.payment-method').forEach(pm => {
+                pm.classList.remove('selected');
+            });
+            document.querySelector(`[data-method="${method}"]`).classList.add('selected');
+
+            // Show/hide payment forms
+            document.querySelectorAll('.payment-form').forEach(form => {
+                form.style.display = 'none';
+            });
+
+            if (method === 'card') {
+                document.getElementById('cardPayment').style.display = 'block';
+            } else if (method === 'paypal') {
+                document.getElementById('paypalPayment').style.display = 'block';
+                initializePayPal();
+            } else if (method === 'stripe') {
+                document.getElementById('stripePayment').style.display = 'block';
+                if (cardElement) {
+                    cardElement.mount('#stripe-card-element');
+                }
+            }
+        }
+
+        function updateBillingSummary(planType) {
+            const plans = {
+                starter: { name: 'Starter Plan', price: 29 },
+                professional: { name: 'Professional Plan', price: 99 }
+            };
+
+            const plan = plans[planType];
+            const tax = plan.price * 0.1; // 10% tax
+            const total = plan.price + tax;
+
+            document.getElementById('selectedPlanName').textContent = plan.name;
+            document.getElementById('selectedPlanPrice').textContent = `$${plan.price.toFixed(2)}`;
+            document.getElementById('taxAmount').textContent = `$${tax.toFixed(2)}`;
+            document.getElementById('totalAmount').textContent = `$${total.toFixed(2)}`;
+        }
+
+        function processPayment() {
+            const button = document.getElementById('completePayment');
+            const loading = button.querySelector('.loading');
+            const text = button.querySelector('.btn-text');
+
+            // Show loading state
+            loading.style.display = 'flex';
+            text.style.display = 'none';
+            button.disabled = true;
+
+            // Simulate payment processing
+            setTimeout(() => {
+                // Hide loading state
+                loading.style.display = 'none';
+                text.style.display = 'inline';
+                button.disabled = false;
+
+                // Move to completion step
+                nextStep(3);
+            }, 3000);
+        }
+
+        function initializePayPal() {
+            if (typeof paypal !== 'undefined') {
+                paypal.Buttons({
+                    createOrder: function(data, actions) {
+                        const plans = {
+                            starter: 29,
+                            professional: 99
+                        };
+                        const amount = plans[selectedPlan] * 1.1; // Including tax
+
+                        return actions.order.create({
+                            purchase_units: [{
+                                amount: {
+                                    value: amount.toFixed(2)
+                                }
+                            }]
+                        });
+                    },
+                    onApprove: function(data, actions) {
+                        return actions.order.capture().then(function(details) {
+                            nextStep(3);
+                        });
+                    }
+                }).render('#paypal-button-container');
+            }
+        }
+
+        function signupWithGoogle() {
+            alert('Google signup integration would be implemented here');
+        }
+
+        function signupWithGitHub() {
+            alert('GitHub signup integration would be implemented here');
+        }
+
+        // Format card number input
+        document.addEventListener('DOMContentLoaded', function() {
+            const cardNumberInput = document.getElementById('cardNumber');
+            if (cardNumberInput) {
+                cardNumberInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+                    let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+                    e.target.value = formattedValue;
+                });
+            }
+
+            const cardExpiryInput = document.getElementById('cardExpiry');
+            if (cardExpiryInput) {
+                cardExpiryInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length >= 2) {
+                        value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                    }
+                    e.target.value = value;
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .chat-container { max-width: 600px; margin: 0 auto; }
+        .message { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .user { background: #e3f2fd; text-align: right; }
+        .assistant { background: #f5f5f5; }
+        input { width: 70%; padding: 10px; }
+        button { padding: 10px 20px; }
+        .status { color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <h1>🤖 Alpha 1 AI Chatbot Test</h1>
+        <div id="messages"></div>
+        <div>
+            <input type="text" id="messageInput" placeholder="Ask me about Alpha 1 AI Platform..." />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+        <div id="status" class="status">Ready to chat!</div>
+    </div>
+
+    <script>
+        class TestChatbot {
+            constructor() {
+                this.apiBase = 'http://localhost:5001/api';
+                this.authToken = null;
+                this.sessionId = 'test_' + Date.now();
+                this.isAuthenticated = false;
+                this.init();
+            }
+
+            async init() {
+                await this.authenticateGuest();
+            }
+
+            async authenticateGuest() {
+                try {
+                    const response = await fetch(`${this.apiBase}/auth/guest-token`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ session_id: this.sessionId })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.authToken = data.token;
+                        this.isAuthenticated = true;
+                        this.updateStatus('✅ Connected to AI platform');
+                    } else {
+                        this.updateStatus('❌ Failed to connect');
+                    }
+                } catch (error) {
+                    this.updateStatus('❌ Connection error');
+                }
+            }
+
+            async sendMessage(message) {
+                if (!message.trim()) return;
+
+                this.addMessage('user', message);
+                this.updateStatus('🤖 AI is thinking...');
+
+                try {
+                    const response = await fetch(`${this.apiBase}/agents/documentation/chat`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${this.authToken}`
+                        },
+                        body: JSON.stringify({
+                            message: `You are an expert AI assistant for the Alpha 1 AI Platform. User question: "${message}". Provide a helpful, detailed response about our platform, agents, pricing, or features.`,
+                            session_id: this.sessionId,
+                            context: "test_chatbot"
+                        })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.addMessage('assistant', data.response);
+                        this.updateStatus('✅ Ready for next question');
+                    } else {
+                        this.addMessage('assistant', '❌ Sorry, I encountered an error. Please try again.');
+                        this.updateStatus('❌ Error occurred');
+                    }
+                } catch (error) {
+                    this.addMessage('assistant', '❌ Connection error. Please check if the server is running.');
+                    this.updateStatus('❌ Connection failed');
+                }
+            }
+
+            addMessage(role, content) {
+                const messagesDiv = document.getElementById('messages');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${role}`;
+                messageDiv.innerHTML = `<strong>${role === 'user' ? 'You' : 'AI Assistant'}:</strong><br>${content}`;
+                messagesDiv.appendChild(messageDiv);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+
+            updateStatus(status) {
+                document.getElementById('status').textContent = status;
+            }
+        }
+
+        const chatbot = new TestChatbot();
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value;
+            if (message.trim()) {
+                chatbot.sendMessage(message);
+                input.value = '';
+            }
+        }
+
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
