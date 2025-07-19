@@ -14,6 +14,7 @@ load_dotenv()
 
 # Import agents blueprint
 from agents import agents_bp
+from file_upload import file_upload_bp
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -32,6 +33,7 @@ jwt = JWTManager(app)
 
 # Register blueprints
 app.register_blueprint(agents_bp, url_prefix='/api')
+app.register_blueprint(file_upload_bp, url_prefix='/api')
 
 # Database Models
 class User(db.Model):

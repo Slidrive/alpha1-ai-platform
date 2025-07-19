@@ -553,6 +553,350 @@
             font-size: 0.9rem;
         }
 
+        /* Voice Control Styles */
+        .voice-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-right: 10px;
+        }
+
+        .voice-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .voice-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .voice-btn.active {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            animation: pulse 1.5s infinite;
+        }
+
+        .voice-btn.recording {
+            background: linear-gradient(135deg, #ff4757 0%, #c44569 100%);
+            animation: recordingPulse 1s infinite;
+        }
+
+        .voice-select {
+            padding: 8px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 12px;
+            min-width: 120px;
+            backdrop-filter: blur(10px);
+        }
+
+        .voice-select option {
+            background: #2c3e50;
+            color: white;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(102, 126, 234, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0); }
+        }
+
+        @keyframes recordingPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .voice-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            border-radius: 20px;
+            font-size: 12px;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            display: none;
+        }
+
+        .voice-status.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* File Upload Styles */
+        .file-upload-container {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            margin: 1rem;
+            overflow: hidden;
+        }
+
+        .file-upload-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .file-upload-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .file-upload-toggle {
+            background: none;
+            border: none;
+            color: var(--accent-blue);
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .file-upload-toggle:hover {
+            background: rgba(74, 144, 226, 0.1);
+        }
+
+        .file-upload-content {
+            padding: 1rem;
+            display: none;
+        }
+
+        .file-upload-content.active {
+            display: block;
+        }
+
+        .file-category-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .file-category-tab {
+            background: var(--tertiary-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .file-category-tab.active {
+            background: var(--accent-blue);
+            color: white;
+            border-color: var(--accent-blue);
+        }
+
+        .file-category-tab:hover:not(.active) {
+            background: var(--glass-bg);
+            border-color: var(--accent-blue);
+        }
+
+        .file-drop-zone {
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            margin-bottom: 1rem;
+        }
+
+        .file-drop-zone.drag-over {
+            border-color: var(--accent-blue);
+            background: rgba(74, 144, 226, 0.05);
+        }
+
+        .file-drop-zone:hover {
+            border-color: var(--accent-blue);
+            background: rgba(74, 144, 226, 0.02);
+        }
+
+        .file-drop-icon {
+            font-size: 2rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .file-drop-text {
+            color: var(--text-primary);
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .file-drop-subtext {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            background: var(--tertiary-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex: 1;
+        }
+
+        .file-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--accent-blue);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .file-details {
+            flex: 1;
+        }
+
+        .file-name {
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .file-meta {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .file-action {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .file-action:hover {
+            color: var(--accent-blue);
+            background: rgba(74, 144, 226, 0.1);
+        }
+
+        .file-action.remove:hover {
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+        }
+
+        .upload-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .upload-btn {
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            color: white;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: opacity 0.2s;
+        }
+
+        .upload-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .upload-btn.secondary {
+            background: var(--tertiary-dark);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .upload-progress {
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .upload-progress.active {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--tertiary-dark);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .hero-container {
@@ -766,13 +1110,80 @@
                     What would you like to know about Alpha 1 AI Platform? I can provide detailed, accurate information about any aspect of our system! 🚀
                 </div>
             </div>
+            
+            <!-- File Upload Section -->
+            <div class="file-upload-section" id="fileUploadSection">
+                <div class="upload-header">
+                    <h4><i class="fas fa-cloud-upload-alt"></i> Upload Files</h4>
+                    <button class="toggle-upload" onclick="toggleFileUpload()">
+                        <i class="fas fa-chevron-up" id="uploadToggleIcon"></i>
+                    </button>
+                </div>
+                
+                <div class="upload-content" id="uploadContent">
+                    <div class="upload-zone" id="uploadZone" ondrop="handleFileDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="upload-text">
+                            <p><strong>Drag & drop files here</strong> or <button class="browse-btn" onclick="document.getElementById('fileInput').click()">browse</button></p>
+                            <p class="upload-info">Supports: Documents, Images, Code, Media, Archives, Data files</p>
+                        </div>
+                        <input type="file" id="fileInput" multiple accept="*/*" style="display: none;" onchange="handleFileSelect(event)">
+                    </div>
+                    
+                    <div class="file-categories">
+                        <div class="category-tabs">
+                            <button class="category-tab active" data-category="all" onclick="filterFileCategory('all')">All</button>
+                            <button class="category-tab" data-category="documents" onclick="filterFileCategory('documents')">Documents</button>
+                            <button class="category-tab" data-category="images" onclick="filterFileCategory('images')">Images</button>
+                            <button class="category-tab" data-category="code" onclick="filterFileCategory('code')">Code</button>
+                            <button class="category-tab" data-category="media" onclick="filterFileCategory('media')">Media</button>
+                        </div>
+                    </div>
+                    
+                    <div class="uploaded-files" id="uploadedFiles">
+                        <!-- Uploaded files will appear here -->
+                    </div>
+                    
+                    <div class="upload-actions">
+                        <button class="btn-upload" onclick="uploadFiles()" disabled id="uploadBtn">
+                            <i class="fas fa-upload"></i> Upload Files
+                        </button>
+                        <button class="btn-clear" onclick="clearFiles()">
+                            <i class="fas fa-trash"></i> Clear All
+                        </button>
+                        <div class="upload-info-text">
+                            <span id="fileCount">0 files selected</span> • 
+                            <span id="totalSize">0 MB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <div class="chat-input-container">
-                <input type="text" class="chat-input" id="chatInput" placeholder="Ask me anything..." onkeypress="handleChatKeypress(event)">
+                <div class="voice-controls">
+                    <button class="voice-btn" id="voiceInputBtn" onclick="toggleVoiceInput()" title="Voice Input">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button class="voice-btn" id="voiceOutputBtn" onclick="toggleVoiceOutput()" title="Voice Output">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                    <select class="voice-select" id="voiceSelect" onchange="changeVoice()" title="Select Voice">
+                        <option value="">Loading voices...</option>
+                    </select>
+                </div>
+                <input type="text" class="chat-input" id="chatInput" placeholder="Ask me anything or click the microphone to speak..." onkeypress="handleChatKeypress(event)">
                 <button class="chat-send" onclick="sendMessage()">
                     <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
         </div>
+    </div>
+
+    <!-- Voice Status Indicator -->
+    <div class="voice-status" id="voiceStatus">
+        <i class="fas fa-microphone"></i> Listening...
     </div>
 
     <script>
@@ -1279,6 +1690,716 @@ Provide a helpful, detailed, and accurate response about the Alpha 1 AI Platform
                 navbar.style.background = 'rgba(10, 10, 10, 0.95)';
             }
         });
+
+        // File Upload Functionality
+        class FileUploadManager {
+            constructor() {
+                this.selectedFiles = [];
+                this.currentCategory = 'documents';
+                this.maxFileSizes = {
+                    documents: 10 * 1024 * 1024, // 10MB
+                    images: 5 * 1024 * 1024,     // 5MB
+                    code: 2 * 1024 * 1024,       // 2MB
+                    media: 50 * 1024 * 1024,     // 50MB
+                    archives: 100 * 1024 * 1024, // 100MB
+                    data: 20 * 1024 * 1024       // 20MB
+                };
+                this.allowedExtensions = {
+                    documents: ['.pdf', '.doc', '.docx', '.txt', '.rtf', '.odt', '.md'],
+                    images: ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.svg', '.webp'],
+                    code: ['.js', '.py', '.html', '.css', '.java', '.cpp', '.c', '.php', '.rb', '.go'],
+                    media: ['.mp4', '.avi', '.mov', '.wmv', '.mp3', '.wav', '.flac'],
+                    archives: ['.zip', '.rar', '.7z', '.tar', '.gz'],
+                    data: ['.json', '.xml', '.csv', '.xlsx', '.sql']
+                };
+                this.initializeEventListeners();
+            }
+
+            initializeEventListeners() {
+                // Toggle file upload panel
+                const toggleBtn = document.getElementById('fileUploadToggle');
+                const content = document.getElementById('fileUploadContent');
+                
+                if (toggleBtn && content) {
+                    toggleBtn.addEventListener('click', () => {
+                        content.classList.toggle('active');
+                        toggleBtn.textContent = content.classList.contains('active') ? 'Hide' : 'Show';
+                    });
+                }
+
+                // Category tabs
+                document.querySelectorAll('.file-category-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        this.switchCategory(e.target.dataset.category);
+                    });
+                });
+
+                // Drag and drop
+                const dropZone = document.getElementById('fileDropZone');
+                if (dropZone) {
+                    dropZone.addEventListener('click', () => {
+                        document.getElementById('fileInput').click();
+                    });
+
+                    dropZone.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        dropZone.classList.add('drag-over');
+                    });
+
+                    dropZone.addEventListener('dragleave', () => {
+                        dropZone.classList.remove('drag-over');
+                    });
+
+                    dropZone.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        dropZone.classList.remove('drag-over');
+                        this.handleFiles(e.dataTransfer.files);
+                    });
+                }
+
+                // File input
+                const fileInput = document.getElementById('fileInput');
+                if (fileInput) {
+                    fileInput.addEventListener('change', (e) => {
+                        this.handleFiles(e.target.files);
+                    });
+                }
+
+                // Upload actions
+                const uploadBtn = document.getElementById('uploadFilesBtn');
+                const clearBtn = document.getElementById('clearFilesBtn');
+                
+                if (uploadBtn) {
+                    uploadBtn.addEventListener('click', () => {
+                        this.uploadFiles();
+                    });
+                }
+
+                if (clearBtn) {
+                    clearBtn.addEventListener('click', () => {
+                        this.clearFiles();
+                    });
+                }
+            }
+
+            switchCategory(category) {
+                this.currentCategory = category;
+                
+                // Update active tab
+                document.querySelectorAll('.file-category-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelector(`[data-category="${category}"]`).classList.add('active');
+
+                // Update drop zone text
+                const dropText = document.querySelector('.file-drop-subtext');
+                const extensions = this.allowedExtensions[category].join(', ');
+                const maxSize = this.formatFileSize(this.maxFileSizes[category]);
+                dropText.textContent = `Supported: ${extensions} (Max: ${maxSize})`;
+            }
+
+            handleFiles(files) {
+                Array.from(files).forEach(file => {
+                    if (this.validateFile(file)) {
+                        this.addFile(file);
+                    }
+                });
+                this.updateFileList();
+                this.updateUploadButton();
+            }
+
+            validateFile(file) {
+                const extension = '.' + file.name.split('.').pop().toLowerCase();
+                const allowedExts = this.allowedExtensions[this.currentCategory];
+                const maxSize = this.maxFileSizes[this.currentCategory];
+
+                if (!allowedExts.includes(extension)) {
+                    this.showError(`File type ${extension} not allowed for ${this.currentCategory}`);
+                    return false;
+                }
+
+                if (file.size > maxSize) {
+                    this.showError(`File size exceeds ${this.formatFileSize(maxSize)} limit`);
+                    return false;
+                }
+
+                // Check for duplicates
+                if (this.selectedFiles.some(f => f.name === file.name && f.size === file.size)) {
+                    this.showError(`File ${file.name} already selected`);
+                    return false;
+                }
+
+                return true;
+            }
+
+            addFile(file) {
+                const fileObj = {
+                    id: Date.now() + Math.random(),
+                    file: file,
+                    name: file.name,
+                    size: file.size,
+                    type: file.type,
+                    category: this.currentCategory,
+                    status: 'pending'
+                };
+                this.selectedFiles.push(fileObj);
+            }
+
+            removeFile(fileId) {
+                this.selectedFiles = this.selectedFiles.filter(f => f.id !== fileId);
+                this.updateFileList();
+                this.updateUploadButton();
+            }
+
+            updateFileList() {
+                const fileList = document.getElementById('fileList');
+                if (!fileList) return;
+
+                if (this.selectedFiles.length === 0) {
+                    fileList.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 1rem;">No files selected</div>';
+                    return;
+                }
+
+                fileList.innerHTML = this.selectedFiles.map(fileObj => `
+                    <div class="file-item">
+                        <div class="file-info">
+                            <div class="file-icon">
+                                <i class="fas ${this.getFileIcon(fileObj.name)}"></i>
+                            </div>
+                            <div class="file-details">
+                                <div class="file-name">${fileObj.name}</div>
+                                <div class="file-meta">${this.formatFileSize(fileObj.size)} • ${fileObj.category}</div>
+                            </div>
+                        </div>
+                        <div class="file-actions">
+                            <button class="file-action" onclick="fileUploadManager.removeFile(${fileObj.id})" title="Remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            updateUploadButton() {
+                const uploadBtn = document.getElementById('uploadFilesBtn');
+                if (uploadBtn) {
+                    uploadBtn.disabled = this.selectedFiles.length === 0;
+                    uploadBtn.textContent = `Upload ${this.selectedFiles.length} File${this.selectedFiles.length !== 1 ? 's' : ''}`;
+                }
+            }
+
+            async uploadFiles() {
+                if (this.selectedFiles.length === 0) return;
+
+                const progressContainer = document.getElementById('uploadProgress');
+                const progressFill = document.querySelector('.progress-fill');
+                const progressText = document.querySelector('.progress-text');
+                
+                progressContainer.classList.add('active');
+                
+                let uploaded = 0;
+                const total = this.selectedFiles.length;
+
+                for (const fileObj of this.selectedFiles) {
+                    try {
+                        await this.uploadSingleFile(fileObj);
+                        uploaded++;
+                        
+                        const progress = (uploaded / total) * 100;
+                        progressFill.style.width = `${progress}%`;
+                        progressText.textContent = `Uploading... ${uploaded}/${total} files`;
+                        
+                    } catch (error) {
+                        console.error('Upload failed:', error);
+                        this.showError(`Failed to upload ${fileObj.name}`);
+                    }
+                }
+
+                // Complete
+                progressText.textContent = `Upload complete! ${uploaded}/${total} files uploaded`;
+                setTimeout(() => {
+                    progressContainer.classList.remove('active');
+                    this.clearFiles();
+                }, 2000);
+            }
+
+            async uploadSingleFile(fileObj) {
+                const formData = new FormData();
+                formData.append('file', fileObj.file);
+                formData.append('category', fileObj.category);
+
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Upload failed: ${response.statusText}`);
+                }
+
+                return await response.json();
+            }
+
+            clearFiles() {
+                this.selectedFiles = [];
+                this.updateFileList();
+                this.updateUploadButton();
+                
+                // Reset file input
+                const fileInput = document.getElementById('fileInput');
+                if (fileInput) {
+                    fileInput.value = '';
+                }
+            }
+
+            getFileIcon(filename) {
+                const extension = filename.split('.').pop().toLowerCase();
+                const iconMap = {
+                    // Documents
+                    'pdf': 'fa-file-pdf',
+                    'doc': 'fa-file-word', 'docx': 'fa-file-word',
+                    'txt': 'fa-file-alt', 'md': 'fa-file-alt',
+                    
+                    // Images
+                    'jpg': 'fa-file-image', 'jpeg': 'fa-file-image', 'png': 'fa-file-image',
+                    'gif': 'fa-file-image', 'svg': 'fa-file-image',
+                    
+                    // Code
+                    'js': 'fa-file-code', 'html': 'fa-file-code', 'css': 'fa-file-code',
+                    'py': 'fa-file-code', 'java': 'fa-file-code', 'cpp': 'fa-file-code',
+                    
+                    // Media
+                    'mp4': 'fa-file-video', 'avi': 'fa-file-video', 'mov': 'fa-file-video',
+                    'mp3': 'fa-file-audio', 'wav': 'fa-file-audio',
+                    
+                    // Archives
+                    'zip': 'fa-file-archive', 'rar': 'fa-file-archive', '7z': 'fa-file-archive',
+                    
+                    // Data
+                    'json': 'fa-file-code', 'xml': 'fa-file-code', 'csv': 'fa-file-excel',
+                    'xlsx': 'fa-file-excel'
+                };
+                
+                return iconMap[extension] || 'fa-file';
+            }
+
+            formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            showError(message) {
+                // Create a simple toast notification
+                const toast = document.createElement('div');
+                toast.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #ff6b6b;
+                    color: white;
+                    padding: 1rem;
+                    border-radius: 8px;
+                    z-index: 10000;
+                    animation: slideIn 0.3s ease;
+                `;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.remove();
+                }, 3000);
+            }
+        }
+
+        // Initialize file upload manager
+        const fileUploadManager = new FileUploadManager();
+
+        // Voice Communication System
+        class VoiceCommunicationSystem {
+            constructor() {
+                this.isListening = false;
+                this.isVoiceOutputEnabled = true;
+                this.recognition = null;
+                this.synthesis = window.speechSynthesis;
+                this.voices = [];
+                this.selectedVoice = null;
+                this.currentUtterance = null;
+                
+                this.init();
+            }
+
+            init() {
+                this.initializeSpeechRecognition();
+                this.loadVoices();
+                this.setupEventListeners();
+                
+                // Load voices when they become available
+                if (this.synthesis.onvoiceschanged !== undefined) {
+                    this.synthesis.onvoiceschanged = () => this.loadVoices();
+                }
+            }
+
+            initializeSpeechRecognition() {
+                if ('webkitSpeechRecognition' in window) {
+                    this.recognition = new webkitSpeechRecognition();
+                } else if ('SpeechRecognition' in window) {
+                    this.recognition = new SpeechRecognition();
+                } else {
+                    console.warn('Speech recognition not supported');
+                    return;
+                }
+
+                this.recognition.continuous = false;
+                this.recognition.interimResults = true;
+                this.recognition.lang = 'en-US';
+
+                this.recognition.onstart = () => {
+                    this.isListening = true;
+                    this.updateVoiceInputButton();
+                    this.showVoiceStatus('Listening...', 'listening');
+                };
+
+                this.recognition.onresult = (event) => {
+                    let finalTranscript = '';
+                    let interimTranscript = '';
+
+                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                        const transcript = event.results[i][0].transcript;
+                        if (event.results[i].isFinal) {
+                            finalTranscript += transcript;
+                        } else {
+                            interimTranscript += transcript;
+                        }
+                    }
+
+                    if (finalTranscript) {
+                        this.handleVoiceInput(finalTranscript);
+                    }
+
+                    // Show interim results
+                    if (interimTranscript) {
+                        this.showVoiceStatus(`Hearing: "${interimTranscript}"`, 'processing');
+                    }
+                };
+
+                this.recognition.onerror = (event) => {
+                    console.error('Speech recognition error:', event.error);
+                    this.isListening = false;
+                    this.updateVoiceInputButton();
+                    this.hideVoiceStatus();
+                    
+                    let errorMessage = 'Voice recognition error';
+                    switch (event.error) {
+                        case 'no-speech':
+                            errorMessage = 'No speech detected. Please try again.';
+                            break;
+                        case 'audio-capture':
+                            errorMessage = 'Microphone not accessible. Please check permissions.';
+                            break;
+                        case 'not-allowed':
+                            errorMessage = 'Microphone permission denied.';
+                            break;
+                    }
+                    this.showVoiceStatus(errorMessage, 'error');
+                    setTimeout(() => this.hideVoiceStatus(), 3000);
+                };
+
+                this.recognition.onend = () => {
+                    this.isListening = false;
+                    this.updateVoiceInputButton();
+                    this.hideVoiceStatus();
+                };
+            }
+
+            loadVoices() {
+                this.voices = this.synthesis.getVoices();
+                this.populateVoiceSelect();
+                
+                // Select a high-quality English voice by default
+                if (!this.selectedVoice && this.voices.length > 0) {
+                    // Prefer neural/premium voices
+                    const preferredVoices = this.voices.filter(voice => 
+                        voice.lang.startsWith('en') && 
+                        (voice.name.includes('Neural') || 
+                         voice.name.includes('Premium') || 
+                         voice.name.includes('Enhanced') ||
+                         voice.name.includes('Google') ||
+                         voice.name.includes('Microsoft'))
+                    );
+                    
+                    if (preferredVoices.length > 0) {
+                        this.selectedVoice = preferredVoices[0];
+                    } else {
+                        // Fallback to any English voice
+                        const englishVoices = this.voices.filter(voice => voice.lang.startsWith('en'));
+                        this.selectedVoice = englishVoices[0] || this.voices[0];
+                    }
+                    
+                    this.updateVoiceSelect();
+                }
+            }
+
+            populateVoiceSelect() {
+                const voiceSelect = document.getElementById('voiceSelect');
+                if (!voiceSelect) return;
+
+                voiceSelect.innerHTML = '';
+                
+                // Group voices by language
+                const englishVoices = this.voices.filter(voice => voice.lang.startsWith('en'));
+                const otherVoices = this.voices.filter(voice => !voice.lang.startsWith('en'));
+
+                if (englishVoices.length > 0) {
+                    const englishGroup = document.createElement('optgroup');
+                    englishGroup.label = 'English Voices';
+                    englishVoices.forEach(voice => {
+                        const option = document.createElement('option');
+                        option.value = voice.name;
+                        option.textContent = `${voice.name} (${voice.lang})`;
+                        if (voice.name.includes('Neural') || voice.name.includes('Premium')) {
+                            option.textContent += ' ⭐';
+                        }
+                        englishGroup.appendChild(option);
+                    });
+                    voiceSelect.appendChild(englishGroup);
+                }
+
+                if (otherVoices.length > 0) {
+                    const otherGroup = document.createElement('optgroup');
+                    otherGroup.label = 'Other Languages';
+                    otherVoices.forEach(voice => {
+                        const option = document.createElement('option');
+                        option.value = voice.name;
+                        option.textContent = `${voice.name} (${voice.lang})`;
+                        otherGroup.appendChild(option);
+                    });
+                    voiceSelect.appendChild(otherGroup);
+                }
+            }
+
+            updateVoiceSelect() {
+                const voiceSelect = document.getElementById('voiceSelect');
+                if (voiceSelect && this.selectedVoice) {
+                    voiceSelect.value = this.selectedVoice.name;
+                }
+            }
+
+            setupEventListeners() {
+                // Voice input button
+                const voiceInputBtn = document.getElementById('voiceInputBtn');
+                if (voiceInputBtn) {
+                    voiceInputBtn.addEventListener('click', () => this.toggleVoiceInput());
+                }
+
+                // Voice output button
+                const voiceOutputBtn = document.getElementById('voiceOutputBtn');
+                if (voiceOutputBtn) {
+                    voiceOutputBtn.addEventListener('click', () => this.toggleVoiceOutput());
+                }
+
+                // Voice select
+                const voiceSelect = document.getElementById('voiceSelect');
+                if (voiceSelect) {
+                    voiceSelect.addEventListener('change', (e) => this.changeVoice(e.target.value));
+                }
+            }
+
+            toggleVoiceInput() {
+                if (!this.recognition) {
+                    alert('Speech recognition is not supported in your browser.');
+                    return;
+                }
+
+                if (this.isListening) {
+                    this.stopListening();
+                } else {
+                    this.startListening();
+                }
+            }
+
+            startListening() {
+                if (this.recognition && !this.isListening) {
+                    try {
+                        this.recognition.start();
+                    } catch (error) {
+                        console.error('Error starting speech recognition:', error);
+                    }
+                }
+            }
+
+            stopListening() {
+                if (this.recognition && this.isListening) {
+                    this.recognition.stop();
+                }
+            }
+
+            toggleVoiceOutput() {
+                this.isVoiceOutputEnabled = !this.isVoiceOutputEnabled;
+                this.updateVoiceOutputButton();
+                
+                if (!this.isVoiceOutputEnabled && this.currentUtterance) {
+                    this.synthesis.cancel();
+                }
+            }
+
+            changeVoice(voiceName) {
+                this.selectedVoice = this.voices.find(voice => voice.name === voiceName);
+            }
+
+            handleVoiceInput(transcript) {
+                const chatInput = document.getElementById('chatInput');
+                if (chatInput) {
+                    chatInput.value = transcript;
+                    // Automatically send the message
+                    setTimeout(() => {
+                        if (typeof sendMessage === 'function') {
+                            sendMessage();
+                        }
+                    }, 500);
+                }
+            }
+
+            speakText(text) {
+                if (!this.isVoiceOutputEnabled || !text) return;
+
+                // Cancel any ongoing speech
+                this.synthesis.cancel();
+
+                // Clean the text for better speech
+                const cleanText = this.cleanTextForSpeech(text);
+
+                this.currentUtterance = new SpeechSynthesisUtterance(cleanText);
+                
+                if (this.selectedVoice) {
+                    this.currentUtterance.voice = this.selectedVoice;
+                }
+
+                // Configure speech parameters for more natural sound
+                this.currentUtterance.rate = 0.9; // Slightly slower for clarity
+                this.currentUtterance.pitch = 1.0;
+                this.currentUtterance.volume = 0.8;
+
+                this.currentUtterance.onstart = () => {
+                    this.showVoiceStatus('Speaking...', 'speaking');
+                };
+
+                this.currentUtterance.onend = () => {
+                    this.hideVoiceStatus();
+                    this.currentUtterance = null;
+                };
+
+                this.currentUtterance.onerror = (event) => {
+                    console.error('Speech synthesis error:', event);
+                    this.hideVoiceStatus();
+                    this.currentUtterance = null;
+                };
+
+                this.synthesis.speak(this.currentUtterance);
+            }
+
+            cleanTextForSpeech(text) {
+                return text
+                    .replace(/🤖/g, '') // Remove robot emoji
+                    .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold markdown
+                    .replace(/\*(.*?)\*/g, '$1') // Remove italic markdown
+                    .replace(/`(.*?)`/g, '$1') // Remove code markdown
+                    .replace(/#{1,6}\s/g, '') // Remove headers
+                    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Convert links to text
+                    .replace(/\n+/g, '. ') // Convert line breaks to pauses
+                    .replace(/\s+/g, ' ') // Normalize whitespace
+                    .trim();
+            }
+
+            updateVoiceInputButton() {
+                const btn = document.getElementById('voiceInputBtn');
+                if (btn) {
+                    if (this.isListening) {
+                        btn.classList.add('recording');
+                        btn.title = 'Stop listening';
+                    } else {
+                        btn.classList.remove('recording');
+                        btn.title = 'Start voice input';
+                    }
+                }
+            }
+
+            updateVoiceOutputButton() {
+                const btn = document.getElementById('voiceOutputBtn');
+                if (btn) {
+                    if (this.isVoiceOutputEnabled) {
+                        btn.classList.add('active');
+                        btn.title = 'Voice output enabled (click to disable)';
+                    } else {
+                        btn.classList.remove('active');
+                        btn.title = 'Voice output disabled (click to enable)';
+                    }
+                }
+            }
+
+            showVoiceStatus(message, type = 'info') {
+                const status = document.getElementById('voiceStatus');
+                if (status) {
+                    status.textContent = message;
+                    status.className = `voice-status show ${type}`;
+                }
+            }
+
+            hideVoiceStatus() {
+                const status = document.getElementById('voiceStatus');
+                if (status) {
+                    status.classList.remove('show');
+                }
+            }
+        }
+
+        // Initialize voice communication system
+        const voiceSystem = new VoiceCommunicationSystem();
+
+        // Global functions for voice controls
+        function toggleVoiceInput() {
+            voiceSystem.toggleVoiceInput();
+        }
+
+        function toggleVoiceOutput() {
+            voiceSystem.toggleVoiceOutput();
+        }
+
+        function changeVoice() {
+            const voiceSelect = document.getElementById('voiceSelect');
+            if (voiceSelect) {
+                voiceSystem.changeVoice(voiceSelect.value);
+            }
+        }
+
+        // Integrate voice output with chatbot responses
+        const originalSendMessage = window.sendMessage;
+        if (originalSendMessage) {
+            window.sendMessage = function() {
+                const result = originalSendMessage.apply(this, arguments);
+                
+                // Hook into the response to enable voice output
+                const originalAddMessage = window.addMessage;
+                if (originalAddMessage) {
+                    window.addMessage = function(message, isBot) {
+                        const result = originalAddMessage.apply(this, arguments);
+                        
+                        // Speak bot responses
+                        if (isBot && voiceSystem.isVoiceOutputEnabled) {
+                            setTimeout(() => {
+                                voiceSystem.speakText(message);
+                            }, 500);
+                        }
+                        
+                        return result;
+                    };
+                }
+                
+                return result;
+            };
+        }
     </script>
 </body>
 </html>
