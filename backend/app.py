@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory, g
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -12,9 +12,10 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# Import agents blueprint
+# Import agents blueprint and API key management
 from agents import agents_bp
 from file_upload import file_upload_bp
+from api_key_manager import require_api_key, get_api_key_info, api_key_manager
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -456,6 +457,87 @@ def create_tables():
             db.session.add(event)
         
         db.session.commit()
+
+# API Key Management Routes
+@app.route('/api/admin/api-keys', methods=['GET'])
+@require_api_key(['ADMIN'])
+def get_api_keys():
+    """Get all API keys information (admin only)"""
+    return jsonify(get_api_key_info())
+
+@app.route('/api/admin/api-keys/usage', methods=['GET'])
+@require_api_key(['ADMIN'])
+def get_api_usage_stats():
+    """Get API usage statistics (admin only)"""
+    days = request.args.get('days', 30, type=int)
+    stats = api_key_manager.get_usage_stats(days=days)
+    
+    return jsonify({
+        'usage_stats': [
+            {
+                'key_id': stat[0],
+                'total_requests': stat[1],
+                'active_days': stat[2],
+                'last_used': stat[3]
+            }
+            for stat in stats
+        ],
+        'period_days': days
+    })
+
+@app.route('/api/admin/api-keys/<key_id>/usage', methods=['GET'])
+@require_api_key(['ADMIN'])
+def get_specific_api_usage(key_id):
+    """Get usage statistics for a specific API key"""
+    days = request.args.get('days', 30, type=int)
+    stats = api_key_manager.get_usage_stats(api_key=key_id, days=days)
+    
+    if stats:
+        stat = stats[0]
+        return jsonify({
+            'key_id': key_id,
+            'total_requests': stat[0],
+            'active_days': stat[1],
+            'avg_status': stat[2],
+            'period_days': days
+        })
+    else:
+        return jsonify({
+            'key_id': key_id,
+            'total_requests': 0,
+            'active_days': 0,
+            'avg_status': 0,
+            'period_days': days
+        })
+
+# Protected API endpoints examples
+@app.route('/api/protected/data', methods=['GET'])
+@require_api_key(['READ'])
+def get_protected_data():
+    """Example protected endpoint requiring READ permission"""
+    return jsonify({
+        'message': 'This is protected data',
+        'data': [
+            {'id': 1, 'value': 'Sample data 1'},
+            {'id': 2, 'value': 'Sample data 2'}
+        ],
+        'api_key_used': getattr(g, 'api_key', 'unknown'),
+        'permissions': getattr(g, 'api_permissions', [])
+    })
+
+@app.route('/api/protected/admin', methods=['GET'])
+@require_api_key(['ADMIN'])
+def get_admin_data():
+    """Example admin-only endpoint"""
+    return jsonify({
+        'message': 'This is admin-only data',
+        'system_info': {
+            'total_users': User.query.count(),
+            'total_projects': Project.query.count(),
+            'total_models': AIModel.query.count()
+        },
+        'api_key_used': getattr(g, 'api_key', 'unknown')
+    })
 
 # Static file serving routes
 @app.route('/')
