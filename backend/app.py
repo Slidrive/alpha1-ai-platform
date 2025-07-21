@@ -553,8 +553,10 @@ def serve_static_files(filename):
     except FileNotFoundError:
         return jsonify({'error': 'File not found'}), 404
 
+# Initialize database tables when app starts (for production)
+with app.app_context():
+    create_tables()
+
 if __name__ == '__main__':
-    with app.app_context():
-        create_tables()
     port = int(os.getenv('PORT', 5001))
     app.run(host='0.0.0.0', port=port, debug=False)
