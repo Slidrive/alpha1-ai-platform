@@ -13,9 +13,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Import agents blueprint and API key management
-from agents import agents_bp
-from file_upload import file_upload_bp
-from api_key_manager import require_api_key, get_api_key_info, api_key_manager
+from backend.agents import agents_bp
+from backend.file_upload import file_upload_bp
+from backend.api_key_manager import require_api_key, get_api_key_info, api_key_manager
+from backend.customer_support_agent import customer_support_bp
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -35,6 +36,7 @@ jwt = JWTManager(app)
 # Register blueprints
 app.register_blueprint(agents_bp, url_prefix='/api')
 app.register_blueprint(file_upload_bp, url_prefix='/api')
+app.register_blueprint(customer_support_bp)
 
 # Database Models
 class User(db.Model):

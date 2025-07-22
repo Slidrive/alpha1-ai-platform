@@ -85,7 +85,7 @@ class PlatformDeployer:
         
         # Create .env file for local development
         env_file = self.project_root / '.env'
-        with open(env_file, 'w') as f:
+        with open(env_file, 'w', encoding='utf-8') as f:
             for key, value in env_vars.items():
                 f.write(f"{key}={value}\n")
         
@@ -163,7 +163,7 @@ class PlatformDeployer:
 """
         
         instructions_file = self.project_root / 'DEPLOYMENT_INSTRUCTIONS.md'
-        with open(instructions_file, 'w') as f:
+        with open(instructions_file, 'w', encoding='utf-8') as f:
             f.write(instructions)
         
         print(f"📋 Detailed instructions saved to {instructions_file}")

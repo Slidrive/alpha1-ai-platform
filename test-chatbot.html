@@ -65,8 +65,60 @@
                 if (!message.trim()) return;
 
                 this.addMessage('user', message);
-                this.updateStatus('🤖 AI is thinking...');
+                this.updateStatus('🤖 AI Support Agent is thinking...');
 
+                try {
+                    // Use the new customer support agent endpoint
+                    const response = await fetch(`${this.apiBase}/support/chat`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${this.authToken}`
+                        },
+                        body: JSON.stringify({
+                            message: message,
+                            session_id: this.sessionId,
+                            user_info: {
+                                user_type: 'guest',
+                                platform: 'web_chatbot'
+                            }
+                        })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        
+                        // Display the main response
+                        this.addMessage('assistant', data.message);
+                        
+                        // Show suggested actions if available
+                        if (data.suggested_actions && data.suggested_actions.length > 0) {
+                            const actionsHtml = `
+                                <div style="margin-top: 10px; padding: 8px; background: #e8f5e8; border-radius: 4px;">
+                                    <strong>💡 Suggested actions:</strong><br>
+                                    ${data.suggested_actions.map(action => `• ${action}`).join('<br>')}
+                                </div>
+                            `;
+                            this.addMessage('assistant', actionsHtml);
+                        }
+                        
+                        // Handle escalation if needed
+                        if (data.escalation_needed) {
+                            this.addMessage('assistant', '🔄 This issue may require technical assistance. Would you like me to escalate this to our technical team?');
+                        }
+                        
+                        this.updateStatus('✅ Ready for next question');
+                    } else {
+                        // Fallback to documentation agent if support agent fails
+                        await this.fallbackToDocumentationAgent(message);
+                    }
+                } catch (error) {
+                    // Fallback to documentation agent on connection error
+                    await this.fallbackToDocumentationAgent(message);
+                }
+            }
+
+            async fallbackToDocumentationAgent(message) {
                 try {
                     const response = await fetch(`${this.apiBase}/agents/documentation/chat`, {
                         method: 'POST',
@@ -77,16 +129,16 @@
                         body: JSON.stringify({
                             message: `You are an expert AI assistant for the Alpha 1 AI Platform. User question: "${message}". Provide a helpful, detailed response about our platform, agents, pricing, or features.`,
                             session_id: this.sessionId,
-                            context: "test_chatbot"
+                            context: "test_chatbot_fallback"
                         })
                     });
 
                     if (response.ok) {
                         const data = await response.json();
                         this.addMessage('assistant', data.response);
-                        this.updateStatus('✅ Ready for next question');
+                        this.updateStatus('✅ Ready for next question (using fallback agent)');
                     } else {
-                        this.addMessage('assistant', '❌ Sorry, I encountered an error. Please try again.');
+                        this.addMessage('assistant', '❌ Sorry, I encountered an error. Please try again or contact support.');
                         this.updateStatus('❌ Error occurred');
                     }
                 } catch (error) {
