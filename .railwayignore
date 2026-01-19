@@ -1,0 +1,77 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+backend/venv/
+backend/.venv/
+backend/env/
+.venv/
+venv/
+env/
+
+# Build outputs
+frontend/build/
+frontend/dist/
+backend/dist/
+build/
+dist/
+
+# Cache and temporary files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+.nyc_output/
+coverage/
+.cache/
+*.tmp
+*.temp
+
+# Logs
+*.log
+logs/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+
+# Environment files (except examples)
+.env
+.env.local
+.env.production
+.env.staging
+*.key
+*.pem
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Test files
+backend/tests/
+backend/test_*.py
+frontend/src/**/*.test.js
+frontend/src/**/*.spec.js
+
+# Kubernetes and Terraform (not needed for Railway)
+k8s/
+terraform/
+helm/
+
+# Monitoring configs (not needed for Railway)
+monitoring/
+
